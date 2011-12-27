@@ -20,7 +20,7 @@ color: #33ee33;
 #band {
 position: fixed;
 top: 50%;
-background: #333 url(http://moresoda.co.uk/images/assets/sub-content.png);
+background: #333 url(/img/sub-content.png);
 border-top: 1px solid #999;
 border-bottom: 1px solid #999;
 height: 100px;
@@ -30,7 +30,7 @@ width: 100%
 }
 
 #circle {
-background: #333 url(http://moresoda.co.uk/images/assets/sub-content.png);
+background: #333 url(/img/sub-content.png);
 position: relative;
 top: 50%;
 left: 50%;
@@ -100,7 +100,7 @@ float: left;
 }
 .marea {
 text-align:center;
-background: #333 url(http://moresoda.co.uk/images/assets/sub-content.png);
+background: #333 url(/img/sub-content.png);
 display: inline;
 float: left;
 border: 2px solid #555;
