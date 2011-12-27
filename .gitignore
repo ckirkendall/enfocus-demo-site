@@ -1,0 +1,11 @@
+
+pom.xml
+*jar
+.lein-failures
+.lein-deps-sum
+target
+.settings
+.metadata
+.project
+.classpath
+*.js
