@@ -1,4 +1,5 @@
 
+/classes
 pom.xml
 *jar
 .lein-failures
