@@ -82,6 +82,10 @@ left: 20px;
 border-radius: 10px;
 }
 
+.content-page {
+padding: 10px;	
+}
+
 #menu {
 position:fixed;
 top: 25px;

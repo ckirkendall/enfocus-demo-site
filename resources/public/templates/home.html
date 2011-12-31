@@ -1,0 +1,37 @@
+<div class="content-page">
+<h1>enfocus</h1>
+<p>enfocus is a dom manipulation library for clojurescript.  
+It was originally inspired by Christophe Grand's clojure based
+enlive.</p>
+<p>It supports all of the enlive based transformation along with many 
+more transformation that are geared towards manipulating a live dom.  
+The best way to understand what this library can do is to look at code.  
+The animation that launched this site was created with enfocus through the
+following code.</p>
+
+<pre>
+(em/deftemplate home "templates/home.html" [])
+
+(em/defaction setup-pane [width height]
+              ["#menu"] (em/delay 1000 (em/do->
+                                         (em/set-style :display "inline")
+                                         (em/fade-in 1000 20)))
+              ["#content-pane"] (em/chain
+                                  (em/resize 5 height 500 20)
+                                  (em/resize width :curheight 500 20)
+                                  (em/content (home))))
+                                  
+(defn init-content-pane []
+    (let [size (dom/getViewportSize)
+          width (- (.width size) 40)
+          height (- (.height size) 70)]
+      (setup-pane width height))))
+      
+(em/defaction start [] 
+              ["#inner-circle"] (em/add-event :click init-content-pane))
+              
+(set! (.onload js/window) #(start))              
+</pre>
+
+<h2>Features</h2>
+</div>
