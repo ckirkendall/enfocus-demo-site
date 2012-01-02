@@ -8,12 +8,13 @@
             [goog.debug :as debug]
             [goog.debug.Logger :as glog]
             [goog.events :as events]
+            [goog.async.Delay :as gdelay]
             [clojure.string :as string])
-  (:require-macros [enfocus.macros :as em]))
+  (:require-macros [enfocus.macros :as em])) 
 (declare css-syms css-select create-sel-str)
 
 
-;####################################################
+;#################################################### 
 ; Utility functions
 ;####################################################
 (def debug true)
@@ -21,6 +22,9 @@
 (defn log-debug [mesg] 
   (when (and debug (not (= (.console js/window) js/undefined)))
     (.log js/console mesg)))
+
+(defn setTimeout [func ttime]
+  (. (new goog.async.Delay func ttime) (start))) 
 
 (defn node? [tst]  
   (dom/isNodeLike tst))
@@ -49,10 +53,18 @@
 (defn- style-set
   "Sets property name to a value on a javascript object
 	Returns the original object (js-set obj :attr value) "
-  ([obj values]
+  [obj values]
     (do (doseq [[attr value] (apply hash-map values)]
           (style/setStyle obj (name attr) value))
-      obj)))
+      obj))
+
+(defn- style-remove
+  "removes the property value from an elements style obj."
+  [obj values]
+  (doseq [attr values]
+    (if (.IE goog/userAgent) 
+      (style/setStyle obj (name attr) "")
+      (.  (.style obj) (removeProperty (name attr))))))
 
 (defn get-eff-prop-name [etype]
   (str "__ef_effect_" etype))
@@ -81,6 +93,9 @@
               (not (identical? re this))
               (not (child-of? this re)))
         (func e)))))
+
+(defn pix-round [step]
+  (if (neg? step) (Math/floor step) (Math/ceil step)))
 
 ;####################################################
 ; The following functions are used to transform
@@ -164,7 +179,7 @@
                      #(do 
                         (callback req) 
                         (swap! tpl-load-cnt dec)))
-      (. req (send uri "GET")))))
+      (. req (send uri "GET"))))) 
 
 
 (defn get-cached-dom 
@@ -200,10 +215,47 @@
   "takes a function an returns a function that
    applys a given function on all nodes returned
    by a given selector"
+  ([func] (multi-node-proc func nil))
+  ([func callback1]
+    (fn trans 
+      ([pnodes] (trans pnodes nil))
+      ([pnodes callback2]
+        (let [pnod-col (nodes->coll pnodes)
+              cnt (atom (count pnod-col))
+              ] 
+          (doall (map func pnod-col )))))))
+
+(defn chainable-standard 
+  "takes a function an returns a function that
+   applys a given function on all nodes returned
+   by a given selector"
   [func]
-  (fn [pnodes]
-    (let [pnod-col (nodes->coll pnodes)] 
-       (doall (map func pnod-col )))))
+  (fn trans 
+    ([pnodes] (trans pnodes nil))
+    ([pnodes chain]
+      (let [pnod-col (nodes->coll pnodes)] 
+        (doall (map func pnod-col ))
+        (when (not (nil? chain))
+          (chain pnodes))))))
+
+(defn chainable-effect
+  "takes a function an returns a function that
+   applys a given function on all nodes returned
+   by a given selector"
+  [func callback]
+  (fn trans 
+    ([pnodes] (trans pnodes nil))
+    ([pnodes chain]
+      (let [pnod-col (nodes->coll pnodes)
+            cnt (atom (count pnod-col))
+            partial-cback (fn []
+                            (swap! cnt dec)
+                            (log-debug (str "cnt:" @cnt))
+                            (when (= 0 @cnt) 
+                              (when (not (nil? callback)) (callback pnodes))
+                              (when (not (nil? chain)) (chain pnodes))))] 
+        (doall (map #(func % partial-cback) pnod-col ))))))
+
 
 
 (defn content-based-trans 
@@ -212,7 +264,7 @@
    to the selected node"
   [values func]
   (let [fnodes (flatten-nodes-coll values)]
-    (multi-node-proc 
+    (chainable-standard 
       (fn [pnod]
         (let [frag (. js/document (createDocumentFragment))]
           (doall (map #(dom/appendChild frag (. % (cloneNode true))) fnodes))
@@ -232,7 +284,7 @@
   "Replaces the content of the element with the dom structure
    represented by the html string passed"
   [txt]
-  (multi-node-proc
+  (chainable-standard 
     (fn [pnod] 
       (let [frag (dom/htmlToDocumentFragment txt)]
         (dom/removeChildren pnod)
@@ -267,7 +319,7 @@
 (defn en-add-class 
   "Adds the specified classes to the selected element." 
   [ & values]
-  (multi-node-proc 
+  (chainable-standard 
     (fn [pnod]
       (let [cur-cls (.className pnod)]
         (doall (map #(if (not (has-class pnod %))
@@ -278,7 +330,7 @@
 (defn en-remove-class 
   "Removes the specified classes from the selected element." 
   [ & values]
-  (multi-node-proc  
+  (chainable-standard 
     (fn [pnod]
       (let [cur (.className pnod)]
         (doall (map #(if (has-class pnod %)
@@ -288,7 +340,7 @@
 
 (defn en-do-> [ & forms]
   "Chains (composes) several transformations. Applies functions from left to right."
-  (multi-node-proc 
+  (chainable-standard  
     (fn [pnod]
       (doall (map #(% pnod) forms)))))
 
@@ -340,14 +392,14 @@
 (defn en-remove-node 
   "removes the selected nodes from the dom" 
   [& values]
-  (multi-node-proc 
+  (chainable-standard  
     (fn [pnod]
       (dom/removeNode pnod))))
 
 (defn en-set-style 
   "set a list of style elements from the selected nodes"
   [& values]
-  (multi-node-proc 
+  (chainable-standard 
     (fn [pnod]
       (style-set pnod values))))
 
@@ -356,10 +408,9 @@
    note: you can only remove styles that are inline styles
    set in css need to overridden through set-style"
   [& values]
-  (multi-node-proc 
+  (chainable-standard  
     (fn [pnod]
-      (doall 
-        (map #(. (.style pnod) (removeProperty (name %))) values)))))
+      (style-remove pnod values))))
 
 (def view-port-monitor (atom nil))
 
@@ -379,7 +430,7 @@
   (cond 
     (= :mouseenter event) (en-add-event :mouseover (mouse-enter-leave func))
     (= :mouseleave event) (en-add-event :mouseout (mouse-enter-leave func))
-    :else (multi-node-proc  
+    :else (chainable-standard   
             (fn [pnod]
               (if (and (= :resize event) (identical? js/window pnod)) ;support window resize
                 (events/listen (get-vp-monitor) "resize" func)
@@ -388,7 +439,7 @@
 (defn en-remove-event 
   "adding an event to the selected nodes"
   [& event-list]
-  (multi-node-proc 
+  (chainable-standard  
     (fn [pnod]
       (doall (map #(events/removeAll pnod (name %)) event-list)))))
 
@@ -425,12 +476,12 @@
     (log-debug (pr-str "stop-effect" pnod ":" etypes))
     (doall (map #(aset pnod (get-eff-prop-name %) (atom #{})) etypes)))) 
 
-
+    
 (defn en-fade-out 
-  "fade the selected nodes over a set of steps"
-  [ttime step]
+  "fade the selected nodes over a set of steps" 
+  [ttime step callback]  
   (let [incr (/ 1 (/ ttime step))]
-    (em/effect step :fade-out [:fade-in]
+    (em/effect step :fade-out [:fade-in] callback
                (fn [pnod etime] 
                  (let [op (style/getOpacity pnod)] (<= op 0)))
                (fn [pnod]
@@ -440,10 +491,10 @@
                      (< 0 op) (style/setOpacity pnod (- op incr))))))))
 
 (defn en-fade-in  
-  "fade the selected nodes over a set of steps"
-  [ttime step]
+  "fade the selected nodes over a set of steps" 
+  [ttime step callback]
   (let [incr (/ 1 (/ ttime step))]
-    (em/effect step :fade-in [:fade-out]
+    (em/effect step :fade-in [:fade-out] callback
                (fn [pnod etime] 
                  (let [op (style/getOpacity pnod)] (>= op 1)))
                (fn [pnod]
@@ -455,105 +506,104 @@
 (defn en-resize 
   "resizes the selected elements to a width and height in px
    optional time series data"
-  ([wth hgt] (en-resize wth hgt 0 0))
-  ([wth hgt ttime step]
-    (let [orig-sym (gensym "orig-size")
-          steps (if (or (zero? ttime) (zero? step) (<= ttime step)) 1 (/ ttime step))]
-      (em/effect step :resize [:resize] 
-                 (fn [pnod etime] true
-                   (let [csize (style/getSize pnod)
-                         osize (aget pnod (name orig-sym))
-                         osize (if osize osize (aset pnod (name orig-sym) csize))
-                         wth (if (= :curwidth wth) (.width osize) wth)
-                         hgt (if (= :curheight hgt) (.height osize) hgt)
-                         wstep (/ (- wth (.width osize)) steps)
-                         hstep (/ (- hgt (.height osize)) steps)]
-                     (if (and
-                           (or 
-                             (zero? wstep)
-                             (and (neg? wstep) (>= wth (.width csize)))
-                             (and (pos? wstep) (<= wth (.width csize))))
-                           (or 
-                             (zero? hstep)
-                             (and (neg? hstep) (>= hgt (.height csize)))
-                             (and (pos? hstep) (<= hgt (.height csize)))))
-                       (do 
-                         (aset pnod (name orig-sym) nil) 
-                         (style/setWidth pnod wth)
-                         (style/setHeight pnod hgt)
-                         true)
-                       false)))
-                 (fn [pnod]
-                   (let [csize (style/getSize pnod)
-                         osize (aget pnod (name orig-sym))
-                         osize (if osize osize (aset pnod (name orig-sym) csize))
-                         wth (if (= :curwidth wth) (.width osize) wth)
-                         hgt (if (= :curheight hgt) (.height osize) hgt)
-                         wstep (/ (- wth (.width osize)) steps)
-                         hstep (/ (- hgt (.height osize)) steps)]
-                     (when (or 
-                             (and (neg? wstep) (< wth (.width csize)))
-                             (and (pos? wstep) (> wth (.width csize))))
-                       (style/setWidth pnod (+ (.width csize) wstep)))
-                     (when (or 
-                             (and (neg? hstep) (< hgt (.height csize)))
-                             (and (pos? hstep) (> hgt (.height csize))))
-                       (style/setHeight pnod (+ (.height csize) hstep)))))))))
- 
+  [wth hgt ttime step callback]
+  (let [orig-sym (gensym "orig-size")
+        steps (if (or (zero? ttime) (zero? step) (<= ttime step)) 1 (/ ttime step))]
+    (em/effect step :resize [:resize] callback
+               (fn [pnod etime] true
+                 (let [csize (style/getSize pnod)
+                       osize (aget pnod (name orig-sym))
+                       osize (if osize osize (aset pnod (name orig-sym) csize))
+                       wth (if (= :curwidth wth) (.width osize) wth)
+                       hgt (if (= :curheight hgt) (.height osize) hgt)
+                       wstep (pix-round (/ (- wth (.width osize)) steps))
+                       hstep (pix-round (/ (- hgt (.height osize)) steps))]
+                   (if (and
+                         (or 
+                           (zero? wstep)
+                           (and (neg? wstep) (>= wth (.width csize)))
+                           (and (pos? wstep) (<= wth (.width csize))))
+                         (or 
+                           (zero? hstep)
+                           (and (neg? hstep) (>= hgt (.height csize)))
+                           (and (pos? hstep) (<= hgt (.height csize)))))
+                     (do 
+                       (aset pnod (name orig-sym) nil) 
+                       (style/setWidth pnod wth)
+                       (style/setHeight pnod hgt)
+                       true)
+                     false)))
+               (fn [pnod]
+                 (let [csize (style/getSize pnod)
+                       osize (aget pnod (name orig-sym))
+                       osize (if osize osize (aset pnod (name orig-sym) csize))
+                       wth (if (= :curwidth wth) (.width osize) wth)
+                       hgt (if (= :curheight hgt) (.height osize) hgt)
+                       wstep (pix-round (/ (- wth (.width osize)) steps))
+                       hstep (pix-round (/ (- hgt (.height osize)) steps))]
+                   (when (or 
+                           (and (neg? wstep) (< wth (.width csize)))
+                           (and (pos? wstep) (> wth (.width csize))))
+                     (style/setWidth pnod (+ (.width csize) wstep)))
+                   (when (or 
+                           (and (neg? hstep) (< hgt (.height csize)))
+                           (and (pos? hstep) (> hgt (.height csize))))
+                     (style/setHeight pnod (+ (.height csize) hstep))))))))
+
 
 (defn en-move
   "moves the selected elements to a x and y in px
    optional time series data "
-  ([xpos ypos] (en-move xpos ypos 0 0))
-  ([xpos ypos ttime step]
-    (let [orig-sym (gensym "orig-pos")
-          steps (if (or (zero? ttime) (zero? step) (<= ttime step)) 1 (/ ttime step))]
-      (em/effect step :move [:move] 
-                 (fn [pnod etime] true
-                   (let [cpos (style/getPosition pnod)
-                         opos (aget pnod (name orig-sym))
-                         opos (if opos opos (aset pnod (name orig-sym) cpos))
-                         xpos (if (= :curx xpos) (.x opos) xpos)
-                         ypos (if (= :cury ypos) (.y opos) ypos)
-                         xstep (/ (- xpos (.x opos)) steps)
-                         ystep (/ (- ypos (.y opos)) steps)
-                         clone (.clone cpos)]
-                     (if (and
-                           (or 
-                             (zero? xstep)
-                             (and (neg? xstep) (>= xpos (.x cpos)))
-                             (and (pos? xstep) (<= xpos (.x cpos))))
-                           (or 
-                             (zero? ystep)
-                             (and (neg? ystep) (>= ypos (.y cpos)))
-                             (and (pos? ystep) (<= ypos (.y cpos)))))
-                       (do 
-                         (aset pnod (name orig-sym) nil) 
-                         (set! (.x clone) xpos)
-                         (set! (.y clone) ypos)
-                         (style/setPosition pnod (.x clone) (.y clone))
-                         true)
-                       false)))
-                 (fn [pnod]
-                   (let [cpos (style/getPosition pnod)
-                         opos (aget pnod (name orig-sym))
-                         opos (if opos opos (aset pnod (name orig-sym) cpos))
-                         xpos (if (= :curx xpos) (.x opos) xpos)
-                         ypos (if (= :cury ypos) (.y opos) ypos)
-                         xstep (/ (- xpos (.x opos)) steps)
-                         ystep (/ (- ypos (.y opos)) steps)
-                         clone (.clone cpos)]
-                     (when (or 
-                             (and (neg? xstep) (< xpos (.x cpos)))
-                             (and (pos? xstep) (> xpos (.x cpos))))
-                       (set! (.x clone) (+ (.x cpos) xstep)))
-                     (when (or 
-                             (and (neg? ystep) (< ypos (.y cpos)))
-                             (and (pos? ystep) (> ypos (.y cpos))))
-                       (set! (.y clone) (+ (.y cpos) ystep)))
-                     (style/setPosition pnod (.x clone) (.y clone))))))))               
-                   
- 
+  [xpos ypos ttime step callback]
+  (let [orig-sym (gensym "orig-pos")
+        steps (if (or (zero? ttime) (zero? step) (<= ttime step)) 1 (/ ttime step))]
+    (em/effect step :move [:move] callback
+               (fn [pnod etime] true
+                 (let [cpos (style/getPosition pnod)
+                       opos (aget pnod (name orig-sym))
+                       opos (if opos opos (aset pnod (name orig-sym) cpos))
+                       xpos (if (= :curx xpos) (.x opos) xpos)
+                       ypos (if (= :cury ypos) (.y opos) ypos)
+                       xstep (pix-round (/ (- xpos (.x opos)) steps))
+                       ystep (pix-round (/ (- ypos (.y opos)) steps))
+                       clone (.clone cpos)]
+                   (log-debug (str cpos ":" xpos ":" ypos ":" xstep ":" ystep))
+                   (if (and
+                         (or 
+                           (zero? xstep)
+                           (and (neg? xstep) (>= xpos (.x cpos)))
+                           (and (pos? xstep) (<= xpos (.x cpos))))
+                         (or 
+                           (zero? ystep)
+                           (and (neg? ystep) (>= ypos (.y cpos)))
+                           (and (pos? ystep) (<= ypos (.y cpos)))))
+                     (do 
+                       (aset pnod (name orig-sym) nil) 
+                       (set! (.x clone) xpos)
+                       (set! (.y clone) ypos)
+                       (style/setPosition pnod (.x clone) (.y clone))
+                       true)
+                     false)))
+               (fn [pnod]
+                 (let [cpos (style/getPosition pnod)
+                       opos (aget pnod (name orig-sym))
+                       opos (if opos opos (aset pnod (name orig-sym) cpos))
+                       xpos (if (= :curx xpos) (.x opos) xpos)
+                       ypos (if (= :cury ypos) (.y opos) ypos)
+                       xstep (pix-round (/ (- xpos (.x opos)) steps))
+                       ystep (pix-round (/ (- ypos (.y opos)) steps))
+                       clone (.clone cpos)]
+                   (when (or 
+                           (and (neg? xstep) (< xpos (.x cpos)))
+                           (and (pos? xstep) (> xpos (.x cpos))))
+                     (set! (.x clone) (+ (.x cpos) xstep)))
+                   (when (or 
+                           (and (neg? ystep) (< ypos (.y cpos)))
+                           (and (pos? ystep) (> ypos (.y cpos))))
+                     (set! (.y clone) (+ (.y cpos) ystep)))
+                   (style/setPosition pnod (.x clone) (.y clone)))))))              
+
+
 ;##################################################################
 ; functions involved in processing the selectors
 ;##################################################################

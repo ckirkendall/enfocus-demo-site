@@ -1,10 +1,11 @@
 <div class="content-page">
 <h1>enfocus</h1>
 <p>enfocus is a dom manipulation library for clojurescript.  
-It was originally inspired by Christophe Grand's clojure based
-enlive.</p>
-<p>It supports all of the enlive based transformation along with many 
-more transformation that are geared towards manipulating a live dom.  
+Originally inspired by Christophe Grand's clojure based
+enlive, it has evolved into a cross browser tool for building rich UIs. </p>
+<p>It supports all of the enlive based transformations along with many 
+more transformations geared towards managing live dom features such as
+events and effects.     
 The best way to understand what this library can do is to look at code.  
 The animation that launched this site was created with enfocus through the
 following code.</p>
@@ -32,6 +33,17 @@ following code.</p>
               
 (set! (.onload js/window) #(start))              
 </pre>
-
-<h2>Features</h2>
+<h2>Differences from Enlive</h2>
+<h3>String Selectors</h3>
+<p>One big difference you will notice right away is the use of CSS3 based 
+String selectors.  This was done as a pragmatic decision.  It is true that
+the long term vision is to support both string based selectors and the full
+Enlive selector syntax right, however right now we have chosen to only support
+string based selectors.  We did this for two reasons: First CSS3 selector syntax 
+is very well documented on the web with lots of examples, and second we are
+delegating the selection of nodes to goog.dom.query and it only supports 
+String based selectors.  We do plan on writing a module that will translate
+Enlive selector syntax into our string based selectors so even selectors can
+be manipulated with macros but this will have to wait until a patch or a later
+release when we have more time. </p>
 </div>

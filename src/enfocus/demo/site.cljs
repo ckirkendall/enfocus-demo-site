@@ -1,6 +1,7 @@
 (ns enfocus.demo.site
   (:require [enfocus.core :as ef]
-            [goog.dom :as dom])
+            [goog.dom :as dom]
+            [SyntaxHighlighter :as sh])
   (:require-macros [enfocus.macros :as em]))
 
 (em/deftemplate home "templates/home.html" [])

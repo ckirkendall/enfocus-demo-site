@@ -80,10 +80,12 @@ top: 50px;
 left: 20px;
 -moz-border-radius: 10px;
 border-radius: 10px;
+overflow: auto
 }
 
 .content-page {
-padding: 10px;	
+padding: 10px;
+color: #333;
 }
 
 #menu {
