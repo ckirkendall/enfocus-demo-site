@@ -1,0 +1,324 @@
+<div class="content-page">
+<h1>Standard Transformations</h1>
+
+<ul class="table-contents">
+<li id="at-link">at form</li>
+<li id="content-link">content</li>             
+<li id="html-content-link">html-content</li>
+<li id="set-attr-link">set-attr</li>
+<li id="remove-attr-link">remove-attr</li>
+<li id="add-class-link">add-class</li>
+<li id="remove-class-link">remove-class</li>
+<li id="do-link">do→</li>
+<li id="append-link">append</li>
+<li id="prepend-link">prepend</li>
+<li id="after-link">after</li>
+<li id="before-link">before</li>
+<li id="substitute-link">substitute</li>
+<li id="clone-for-link">clone-for</li>
+<li id="wrap-link">wrap</li>
+<li id="unwrap-link">unwrap</li>
+<li id="set-style-link">set-style</li>
+<li id="remove-style-link">remove-style</li>
+</ul>
+
+<h3 id="doc-at">The <u>at</u> Form</h3>
+<p>At the core to understanding enfocus is the <em>at</em> form used in the 
+"Hello world!" example above.  It comes in two basic flavors listed below:</p>
+<pre>
+(at a-node (transform arg1 ...))
+
+and
+
+(at a-node
+    [selector1] (transform1 arg1 ...)
+    [selector2] (transform2 arg1 ...))
+</pre>
+<p>In the first case <em>at</em> is passed a node or node set and a transform and calls the 
+transform on each element in the node set. <p>
+<p>A <em>transform</em> is nothing more than a function that takes a set of arguments and returns a function 
+that takes a set of nodes.</p>
+<p>In the second case we see <em>at</em> is passed a node or node set and a set of 
+selector/transform pairs. The selectors are scoped by the node or node set passed in and 
+the results of each selector is passed on to its partner transformation.</p> 
+<p>A <em>selector</em> is a string representing a <a href="http://www.w3schools.com/cssref/css_selectors.asp">CSS3 compliant selector</a>. 
+
+
+
+<h3 id="doc-content">Transform: <em>content</em></h3>
+<p>the <em>content</em> transform replaces the content nodes returned by the selector with 
+elements in its body. The body can be made up of strings, nodes and/or node sets<p>  
+<pre>
+(content “xyz” a-node “abc”)
+</pre>
+<p>Example: <button id="button1">click me</button></p>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction content-demo []
+  ["#button1"] (em/content "I have been clicked"))        
+</pre>
+
+<h3 id="doc-html-content">Transform: <em>html-content</em></h3>
+<p>the <em>html-content</em> transform converts the html string to a document fragements and 
+replaces the content of the nodes returned by the selector with the fragment.<p>  
+<pre>
+(html-content "&lt;tag&gt;content&lt;tag&gt;")
+</pre>
+<p>Example: <button id="button2">click me</button> <span id="html-content-demo">I will be replaced</span></p>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction html-content-demo []
+  ["#html-content-demo"] (em/html-content "&lt;span style='color: #ff3333'&gt;I replaced the text&lt;/span&gt;"))        
+</pre>
+
+<h3 id="doc-set-attr">Transform: <em>set-attr</em></h3>
+<p><em>set-attr</em> will set the value of an attribute on the nodes returned by a selector<p>  
+<pre>
+(set-attr :attr1 "test" :attr2 "test2" ...)
+</pre>
+<p>Example: <button id="button3">click me</button> 
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction set-attr-demo []
+  ["#button3"] (em/set-attr :foo "bar"))        
+</pre>
+<pre>
+CSS:
+button[foo=bar] {
+background-color: #33ff33;	
+}
+</pre>
+
+<h3 id="doc-remove-attr">Transform: <em>remove-attr</em></h3>
+<p><em>remove-attr</em> will remove a set of attributes from the nodes returned by a selector<p>  
+<pre>
+(remove-attr :attr1 :attr2 ...)
+</pre>
+<p>Example: <button id="button4" foo="bar">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction set-attr-demo []
+  ["#button4"] (em/remove-attr :foo))        
+</pre>
+<pre>
+CSS:
+button[foo=bar] {
+background-color: #33ff33;	
+}
+</pre>
+
+<h3 id="doc-add-class">Transform: <em>add-class</em></h3>
+<p><em>add-class</em> will a add a list of classes to the nodes returned by a selector<p>  
+<pre>
+(add-class "class1" "class2" ...)
+</pre>
+<p>Example: <button id="button5">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction add-class-demo []
+  ["#button5"] (em/add-class "highlight""))        
+</pre>
+<pre>
+CSS:
+.highlight {
+border: 2px solid #ff3333;	
+}
+</pre>
+
+<h3 id="doc-remove-class">Transform: <em>remove-class</em></h3>
+<p><em>remove-class</em> will a remove a set of classes from the nodes returned by a selector<p>  
+<pre>
+(remove-class "class1" "class2" ...)
+</pre>
+<p>Example: <button id="button6" class="highlight">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction remove-class-demo []
+  ["#button6"] (em/remove-class "highlight"))        
+</pre>
+<pre>
+CSS:
+.highlight {
+border: 2px solid #ff3333;	
+}
+</pre>
+
+<h3 id="doc-do">Transform: <em>do-></em></h3>
+<p><em>do</em> will execute a series of transforms on the nodes returned by a selector. Note effects will be executed asynchronously<p>  
+<pre>
+(do-> transformation1 transformation2 ...)
+</pre>
+<p>Example: <button id="button7">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction do-demo []
+  ["#button7"] (em/do->
+                 (em/add-attr :foo "bar")
+                 (em/add-class "highlight")))       
+</pre>
+<pre>
+CSS:
+button[foo=bar] {
+background-color: #33ff33;	
+}
+.highlight {
+border: 2px solid #ff3333;		
+}
+</pre>
+
+<h3 id="doc-append">Transform: <em>append</em></h3>
+<p><em>append</em> will append the content to the existing content of the nodes returned by a selector.<p>  
+<pre>
+(append "text" a-node "text" ...)
+</pre>
+<p>Example: <button id="button8">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction append-demo []
+  ["#button8"] (em/append ":append"))       
+</pre>
+
+<h3 id="doc-prepend">Transform: <em>prepend</em></h3>
+<p><em>prepend</em> will prepend the content to the existing content of the nodes returned by a selector.<p>  
+<pre>
+(append "text" a-node "text" ...)
+</pre>
+<p>Example: <button id="button9">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction prepend-demo []
+  ["#button9"] (em/prepend "prepend:"))      
+</pre>
+
+<h3 id="doc-after">Transform: <em>after</em></h3>
+<p><em>after</em> will insert the content after the node returned by a selector.<p>  
+<pre>
+(after "text" a-node "text" ...)
+</pre>
+<p>Example: <button id="button10">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction after-demo []
+  ["#button10"] (em/after ":after"))       
+</pre>
+
+<h3 id="doc-before">Transform: <em>before</em></h3>
+<p><em>before</em> will insert the content after the node returned by a selector.<p>  
+<pre>
+(before "text" a-node "text" ...)
+</pre>
+<p>Example: <button id="button11">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction before-demo []
+  ["#button11"] (em/before "before:"))      
+</pre>
+
+<h3 id="doc-sub">Transform: <em>substitute</em></h3>
+<p><em>substitute</em> replaces the node returned by a selector with the content in the body.<p>  
+<pre>
+(substitute "text" a-node "text" ...)
+</pre>
+<p>Example: <button id="button12">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction sub-demo []
+  ["#button12"] (em/substitute "I replaced the button"))      
+</pre>
+
+<h3 id="doc-clone-for">Transform: <em>clone-for</em></h3>
+<p><em>clone-for</em> has a similar syntax and function as the clojure <em>for</em>.  It will sequence through a 
+collection of items and clone the node returned from the selector with each iteration.  This node will be passed to an 
+implicit <em>at</em> form where additional selectors and transformation will modify the cloned node.  Once through the
+entire collection it will substitute the clone node set for the original node.<p>
+<pre>
+(clone-for [item items] transformation)
+or 
+(clone-for [item items] 
+  selector1 transformation1
+  selector2 transformation2)
+</pre>
+<p>Example: <button id="button13">click me</button> </p>
+<table id="clone-for-demo" border="1">
+<thead>
+<tr><th>fruit</th><th>quantity</th></tr>
+</thead>
+<tbody>
+<tr><td>replace</td><td>me</td></tr>
+</tbody>
+</table>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(defn clone-for-demo []
+  (let [fruit-data {"apple" 5, "pear" 6}]
+    (em/at js/document
+       ["#clone-for-demo tbody > tr:first-child"] 
+         (em/clone-for [fr (vec fruit-data)]
+            ["*:first-child"] (em/content (first fr))
+            ["*:last-child"] (em/content (str (second fr)))))))
+</pre>
+
+<h3 id="doc-wrap">Transform: <em>wrap</em></h3>
+<p><em>wrap</em> will replace the selected node with newly created node that contains the old node as a child.<p>  
+<pre>
+(wrap :div {:attr1 "test" :attr2 "test2" ...)
+</pre>
+<p>Example: <button id="button14">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction wrap-demo []
+  ["#button14"] (em/wrap :span {:class "highlight"}))      
+</pre>
+<pre>
+CSS:
+.highlight {
+border: 2px solid #ff3333;		
+}
+</pre>
+
+<h3 id="doc-unwrap">Transform: <em>unwrap</em></h3>
+<p><em>unwrap</em> replaces the node returned by a selector with its children.<p>  
+<pre>
+(unwrap)
+</pre>
+<p>Example: <button id="button15">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction unwrap-demo []
+  ["#button15"] (em/unwrap))      
+</pre>
+<pre>
+CSS:
+.highlight {
+border: 2px solid #ff3333;		
+}
+</pre>
+<h3 id="doc-set-style">Transform: <em>set-style</em></h3>
+<p><em>set-style</em> sets a style property on selected nodes style object.<p>  
+<pre>
+(set-style :background-color "#ff3333" :border "1px solid #000"...)
+</pre>
+<p>Example: <button id="button16">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction set-style-demo []
+  ["#button16"] (em/set-style :border "2px solid blue"))      
+</pre>
+
+<h3 id="doc-remove-style">Transform: <em>remove-style</em></h3>
+<p><em>remove-style</em> removes a style property on selected nodes style object.<p>  
+<pre>
+(remove-style :background-color :border)
+</pre>
+<p>Example: <button id="button17" style="border: 2px solid blue;">click me</button>
+<p>The following action was triggered when we click the button</p>
+<pre>
+(em/defaction remove-style-demo []
+  ["#button17"] (em/remove-style :border))      
+</pre>
+<pre>
+CSS:
+.highlight {
+border: 2px solid #ff3333;		
+}
+</pre>

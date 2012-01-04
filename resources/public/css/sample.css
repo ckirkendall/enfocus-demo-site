@@ -5,6 +5,11 @@ font-family: sans-serif;
 color: #33ee33;
 }
 
+pre {
+background-color: #efefef;
+border: 1px solid #555;
+padding: 10px;
+}
 
 #title {
 width: 200px;
@@ -44,6 +49,7 @@ border-radius: 100px;
 }
 
 #inner-circle {
+cursor: pointer;
 position: relative;
 top: 50%;
 left: 50%;
@@ -105,6 +111,7 @@ width: 460px
 float: left;
 }
 .marea {
+cursor: pointer;
 text-align:center;
 background: #333 url(/img/sub-content.png);
 display: inline;
@@ -144,4 +151,14 @@ color: #33ee33;
 text-shadow: 0 0 5px rgba(51,238,51,1);
 }
 
+.table-contents {
+cursor: pointer;
+}
 
+button[foo=bar] {
+background-color: #33ff33;	
+}
+
+.highlight {
+border: 2px solid #ff3333;		
+}
