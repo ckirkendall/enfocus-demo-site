@@ -8,7 +8,7 @@ From any leiningen project file:
 Then make sure you have your lib folder on your classpath.
 
 For the best development experience, try out cljs-watch. If you do, you'll need to replace the goog.jar in your CLOJURESCRIPT_HOME/lib with the goog-jar.jar that comes down as a dependency with enfocus.
-</pre>
+
 
 <h3>The Basics</h3>
 Every great journey starts with "Hello world!"
@@ -24,7 +24,7 @@ Every great journey starts with "Hello world!"
 (set! (.onload js/window) start)         
 </pre>
 <h3>The <u>at</u> Form</h3>
-<p>At the core to understanding enfocus is the <em>at</em> form used in the 
+<p>At the core to understanding Enfocus is the <em>at</em> form used in the 
 "Hello world!" example above.  It comes in two basic flavors listed below:</p>
 <pre>
 (at a-node (transform arg1 ...))
@@ -37,15 +37,14 @@ and
 </pre>
 <p>In the first case <em>at</em> is passed a node or node set and a transform and calls the 
 transform on each element in the node set. <p>
-<p>A <em>transform</em> is nothing more than a function that takes a set of args and returns a function 
-that takes a set of nodes.  In case of the "Hello World!" example above we see the use of
+<p>A <em>transform</em> is nothing more than a function that takes a set of arguments and returns a function 
+that takes a set of nodes.  In case of the "Hello World!" example above, we see the use of
 (em/content "Hello world!") this call returns a function that takes node or node set
 and replaces the content with "Hello world!"</p>
-<p>In the second case we see <em>at</em> is passed a node or node set and a set of 
+<p>In the second case, we see <em>at</em> is passed a node or node set and a set of 
 selector/transform pairs. The selectors are scoped by the node or node set passed in and 
 the results of each selector is passed on to its partner transformation.</p> 
 <p>A <em>selector</em> is a string representing a <a href="http://www.w3schools.com/cssref/css_selectors.asp">CSS3 compliant selector</a>. 
-
 
 <h3>Handling Events</h3>
 <p>Lets look at handling events. When we click the button it will change to 
@@ -69,8 +68,8 @@ CLJS:
 	
 (set! (.onload js/window) setup)         
 </pre>
-<p><em>defaction</em> is use here instead <em>defn</em>.  defaction
-creates a function that calls the <em>at</em>form like discussed above 
+<p>The <em>defaction</em> construct is use here instead <em>defn</em>.  <em>defaction</em>
+creates a function that calls the <em>at</em> form like discussed above 
 and passes in js/document as the node to be transformed.</p>
 
 <h3>Effects</h3>
@@ -99,4 +98,25 @@ effects can be chained.</p>
   ["#button2"] (em/listen #(resize-div 200)))
 	
 (set! (.onload js/window) setup)         
+</pre>
+
+<h3>A bit more complicated example with clone-for</h3>
+<p>Example: <button id="button3">click me</button> </p>
+<table id="clone-for-demo" border="1">
+<thead>
+<tr><th>fruit</th><th>quantity</th></tr>
+</thead>
+<tbody>
+<tr><td>replace</td><td>me</td></tr>
+</tbody>
+</table>
+<p>The following action is triggered when we click the button.</p>
+<pre>
+(defn clone-for-demo []
+  (let [fruit-data {"apple" 5, "pear" 6}]
+    (em/at js/document
+       ["#clone-for-demo tbody > tr:first-child"] 
+         (em/clone-for [fr (vec fruit-data)]
+            ["*:first-child"] (em/content (first fr))
+            ["*:last-child"] (em/content (str (second fr)))))))
 </pre>

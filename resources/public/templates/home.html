@@ -1,13 +1,13 @@
 <div class="content-page">
 <h1>Enfocus</h1>
-<p>Enfocus is a dom manipulation library for clojurescript.  
+<p>Enfocus is a dom manipulation library for ClojureScript.  
 Originally inspired by Christophe Grand's clojure based
-enlive, it has evolved into a cross browser tool for building rich UIs. </p>
-<p>It supports all of the enlive based transformations along with many 
-more transformations geared towards managing live dom features such as
+Enlive, it has evolved into a cross browser tool for building rich UIs. </p>
+<p>It supports all of the Enlive based transformations along with many 
+more transformations geared towards managing live dom features, such as
 events and effects.     
 The best way to understand what this library can do is to look at code.  
-The animation that launched this site was created with enfocus through the
+The animation that launched this site was created with Enfocus through the
 following code.</p>
 
 <pre>
@@ -33,19 +33,28 @@ following code.</p>
               
 (set! (.onload js/window) #(start))              
 </pre>
-<p>In this small peice of code we can see many of key features of enfocus: content manipulation, style manipulation, 
-remote resources, complex effects, event handling and management of timed or synchronized events.  All this and we have only seen 20 lines of code!
+<p>In this small piece of code we can see many of key features of enfocus: content manipulation, style manipulation, 
+remote resources, complex effects, event handling and management of timed or synchronized events.  All this, and we have only seen 20 lines of code!
 
 <h4>What happend to Enlive's selector syntax?</h4>
-<p>If you are coming from enlive one big difference you will notice right away is the use of CSS3 based 
+<p>If you are coming from Enlive, one big difference you will notice right away is the use of CSS3 based 
 string selectors.  This was a pragmatic decision to lower the barrier to entry 
 and allow us to concentrate on other features.  It is true that
 the long term vision is to support both string based selectors and the full
 Enlive selector syntax right, however right now we have chosen to only support
 string based selectors.  We do plan on writing a module that will translate
 Enlive selector syntax into our string based selectors so even selectors can
-be manipulated with macros but this will have to wait until a patch or a later
-release when we have more time. </p>
+be manipulated with macros, but this will have to wait until a patch or a later
+release. </p>
+
+
+<h4>How can I contribute?</h4>
+<p>You will find instructions for contributing to either Enfocus main project or the Enfocus demo site project at the following links:</p>
+<ul>
+<li><a href="https://github.com/ckirkendall/enfocus">enfocus main</a></li>
+<li><a href="https://github.com/ckirkendall/enfocus-demo-site">enfocus demo site</a></li>
+
+</ul>
 
 <h4>License</h4>
 

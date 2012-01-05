@@ -6,12 +6,19 @@
 (declare home 
          home-page 
          gstarted-page
-         doc-trans-page)
+         doc-trans-page
+         clone-for-demo
+         doc-templates-page)
 
 (defn scroll-to []
   (ef/chainable-standard
     (fn [nod]
       (. nod (scrollIntoView)))))
+
+(defn reset-scroll []
+  (ef/chainable-standard
+    (fn [nod]
+      (set! (.scrollTop nod) 0))))
 
 
 (em/defaction setup-pane [width height]
@@ -21,6 +28,9 @@
               ["#home-button"] (em/listen :click home-page)
               ["#gstarted-button"] (em/listen :click gstarted-page)
               ["#doc-trans"] (em/listen :click doc-trans-page)
+              ["#doc-events"] (em/listen :click doc-events-page) 
+              ["#doc-effects"] (em/listen :click doc-effects-page)
+              ["#doc-remote"] (em/listen :click doc-template-page)
               ["#content-pane"] (em/chain
                                   (em/resize 5 height 500 20)
                                   (em/resize width :curheight 500 20 )
@@ -71,7 +81,9 @@
 (em/deftemplate home "templates/home.html" [])
 
 (em/defaction home-page []
-  ["#content-pane"] (em/content (home)))
+  ["#content-pane"] (em/do->
+                      (em/content (home))
+                      (reset-scroll)))
 
 
 ;#######################################
@@ -81,7 +93,9 @@
 (em/deftemplate gstarted "templates/getting-started.html" [])
 
 (em/defaction gstarted-page []
-  ["#content-pane"] (em/content (gstarted))  
+  ["#content-pane"] (em/do->
+                      (em/content (gstarted))
+                      (reset-scroll))
   ["#button1"] (em/listen 
                  :click 
                  #(em/at (.currentTarget %) 
@@ -91,7 +105,8 @@
                  #(em/at js/document 
                          ["#rz-demo"] (em/chain 
                                        (em/resize 200 :curheight 500 20)
-                                       (em/resize 5 :curheight 500 20)))))
+                                       (em/resize 5 :curheight 500 20))))
+  ["#button3"] (em/listen :click clone-for-demo))
 
 ;########################################
 ; standard transform page actions
@@ -157,8 +172,10 @@
 (em/defaction remove-style-demo []
   ["#button17"] (em/remove-style :border))
 
-(em/defaction doc-trans-page []
-  ["#content-pane"] (em/content (doc-trans))
+(em/defaction doc-trans-page [] 
+  ["#content-pane"] (em/do->
+                      (em/content (doc-trans))
+                      (reset-scroll))
   ["#at-link"] (em/listen :click #(em/at js/document ["#doc-at"] (scroll-to)))         
   ["#content-link"] (em/listen :click #(em/at js/document ["#doc-content"] (scroll-to)))         
   ["#html-content-link"] (em/listen :click #(em/at js/document ["#doc-html-content"] (scroll-to)))
@@ -199,3 +216,106 @@
 ; handling events page actions
 ;########################################
 
+(em/deftemplate doc-event "templates/handling-events.html" [])
+
+
+(em/defaction remove-demo []
+  ["#remove-demo"] (em/remove-listener :mouseenter :mouseleave))
+
+(em/defaction doc-events-page []
+  ["#content-pane"] (em/do->
+                      (em/content (doc-event))
+                      (reset-scroll))
+  ["#listen-link"] (em/listen :click #(em/at js/document ["#doc-listen"] (scroll-to)))         
+  ["#remove-link"] (em/listen :click #(em/at js/document ["#doc-remove"] (scroll-to)))         
+  ["#support-link"] (em/listen :click #(em/at js/document ["#doc-support"] (scroll-to)))
+  ["#button1"] (em/listen :click 
+                          #(em/at (.currentTarget %) 
+                             (em/content "I have been replaced")))
+  ["#remove-demo"] (em/do->
+                     (em/listen :mouseenter #(em/at (.currentTarget %) (em/add-class "highlight"))) 
+                     (em/listen :mouseleave #(em/at (.currentTarget %) (em/remove-class "highlight"))))
+  ["#button2"] (em/listen :click remove-demo))     
+
+
+;########################################
+; effects and timing page actions
+;########################################
+
+(em/deftemplate doc-effect "templates/effects-timing.html" [])
+
+(em/defaction resize-demo [] 
+  ["#rz-demo"] (em/resize 200 :curheight 500 20
+                 (em/resize 5 :curheight 500 20)))       
+
+(em/defaction move-demo [] 
+  ["#mv-demo"] (em/move 300 :cury 500 20
+                 (em/move -20 :cury 500 20)))
+
+(em/defaction fade-demo [] 
+  ["#fade-demo"] (em/fade-out 500 20
+                   (em/fade-in 500 20)))
+
+(em/defaction delay-demo [] 
+  ["#delay-demo"] (em/do-> (em/resize 200 :curheight 500 20)
+                           (em/delay 2000 (em/resize 50 :curheight 500 20))))
+
+(em/defaction chain-demo [] 
+  ["#chain-demo"] (em/chain (em/resize 200 :curheight 500 20)
+                            (em/resize 5 :curheight 500 20)))
+
+(em/defaction doc-effects-page []
+  ["#content-pane"] (em/do->
+                      (em/content (doc-effect))
+                      (reset-scroll))
+  ["#resize-link"] (em/listen :click #(em/at js/document ["#doc-resize"] (scroll-to)))         
+  ["#move-link"] (em/listen :click #(em/at js/document ["#doc-move"] (scroll-to)))         
+  ["#fade-link"] (em/listen :click #(em/at js/document ["#doc-fade"] (scroll-to)))         
+  ["#delay-link"] (em/listen :click #(em/at js/document ["#doc-delay"] (scroll-to)))         
+  ["#chain-link"] (em/listen :click #(em/at js/document ["#doc-chain"] (scroll-to)))
+  ["#button1"] (em/listen :click resize-demo)
+  ["#button2"] (em/listen :click move-demo)
+  ["#button3"] (em/listen :click fade-demo)
+  ["#button4"] (em/listen :click delay-demo)
+  ["#button5"] (em/listen :click chain-demo))   
+
+
+;########################################
+; templates and snippets actions
+;########################################
+
+(em/deftemplate doc-template "templates/templates-snippets.html" [])
+
+(em/deftemplate template-demo "/templates/template-demo.html" [fruit-data] 
+                ["#heading1"] (em/content "fruit")  
+                ["thead tr > *:last-child"] (em/content "quantity")
+                ["tbody > tr:not(:first-child)"] (em/remove-node)
+                ["tfoot tr > *:last-child"] (em/content (str (apply + (vals fruit-data))))
+                ["tbody > tr:first-child"] (em/clone-for [fr (vec fruit-data)]
+                                              ["*:first-child"] (em/content (first fr))
+                                              ["*:last-child"] (em/content (str (second fr)))))
+
+(em/defsnippet snippet2 "templates/template-demo.html" ["tbody > *:first-child"] 
+               [fruit quantity] 
+               ["tr > *:first-child"] (em/content fruit)
+               ["tr > *:last-child"] (em/content (str quantity)))
+  
+(em/deftemplate template-demo2 "/templates/template-demo.html" [fruit-data] 
+                ["#heading1"] (em/content "fruit")  
+                ["thead tr > *:last-child"] (em/content "quantity")
+                ["tfoot tr > *:last-child"] (em/content (str (apply + (vals fruit-data))))
+                ["tbody"] (em/content
+                           (map #(snippet2 % (fruit-data %)) (keys fruit-data)))) 
+
+(em/defaction doc-template-page []
+  ["#content-pane"] (em/do->
+                      (em/content (doc-template))
+                      (reset-scroll))         
+  ["#template-link"] (em/listen :click #(em/at js/document ["#doc-template"] (scroll-to)))         
+  ["#snippet-link"] (em/listen :click #(em/at js/document ["#doc-snippet"] (scroll-to)))         
+  ["#load-link"] (em/listen :click #(em/at js/document ["#doc-load"] (scroll-to)))
+  ["#button1"] (em/listen :click #(em/at js/document 
+                                    ["#template-demo"] (em/content (template-demo {"apple" 8, "pear" 9}))))
+  ["#button2"] (em/listen :click #(em/at js/document 
+                                    ["#snippet-demo"] (em/content (template-demo2 {"apple" 6, "pear" 5})))))
+    

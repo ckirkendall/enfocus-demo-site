@@ -1,0 +1,72 @@
+<div class="content-page">
+<h1>Handling Events</h1>
+<ul class="table-contents">
+<li id="listen-link">listen</li>
+<li id="remove-link">remove-listener</li>             
+<li id="support-link">supported events</li>
+</ul>
+
+<h3 id="doc-listen">Transform: <em>listen</em></h3>
+<p>The <em>listen</em> transform places an event listener, for the given event, on the nodes returned by the selector.  
+When the event is trigger the event object is passed as a parameter to the function call.<p> 
+<p>The <em>event object</em> is of type goog.event.Event.  Documentation for this object can
+be found <a href="http://closure-library.googlecode.com/svn/docs/class_goog_events_Event.html">here</a>.</p>
+ 
+<pre>
+(listen :click (fn [event].....))
+</pre>
+<p>Example: <button id="button1">click me</button></p>
+<p>The following action is triggered when we click the button</p>
+<pre>
+(em/at js/document
+  ["#button1"] (em/listen :click 
+                          #(em/at (.currentTarget %) 
+                             (em/content "I have been replaced"))))       
+</pre>
+<p>Notice in the above example, we are using the <em>at</em> form as event handler.</p>
+
+<h3 id="doc-remove">Transform: <em>remove-listener</em></h3>
+<p>The <em>remove-listener</em> transform removes listeners for a given event type on all nodes
+returned by the selector.</p>
+<pre>
+(remove-listener :mouseover :mouseout ...)
+</pre>
+<p>Example: <button id="button2">click me</button><span id="remove-demo">hover over me</span></p>
+<p>The first defaction was called to setup the :mouseenter event on text "hover over me". The
+second defaction is triggered when we click the button.</p>
+<pre>
+(em/at js/document
+  ["#remove-demo"] (do->
+                     (em/listen :mouseenter 
+                                #(at (.currentTarget %) (em/add-class "highlight"))) 
+                     (em/listen :mouseleave 
+                                #(at (.currentTarget %) (em/remove-class "highlight"))))) 
+
+(em/defaction remove-demo []
+  ["#remove-demo"] (em/remove-listener :mouseenter :mouseleave))   
+</pre>
+
+
+<h3 id="doc-support">Supported Events</em></h3>
+<p>All events below have cross browser support:</p>
+<ul>
+<li>:click</li>
+<li>:dbclick</li>
+<li>:mousedown</li>
+<li>:mouseup</li>
+<li>:mouseover</li>
+<li>:mouseout</li>
+<li>:mouseenter</li>
+<li>:mouseleave</li>
+<li>:mousemove</li>
+<li>:keypress</li>
+<li>:keydown</li>
+<li>:keyup</li>
+<li>:blur</li>
+<li>:focus</li>
+<li>:change</li>
+<li>:select</li>
+<li>:submit</li>
+<li>:input</li>
+<li>:resize - for js/window</li>
+</ul>

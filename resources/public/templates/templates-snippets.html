@@ -1,0 +1,77 @@
+<div class="content-page">
+<h1>Templates and Snippets</h1>
+<ul class="table-contents">
+<li id="template-link">deftemplate</li>             
+<li id="snippet-link">defsnippet</li>
+<li id="load-link">wait-for-load</li>
+</ul>
+
+<h3 id="doc-template">deftemplate</h3>
+<p>The deftemplate construct defines a function that performs a set of transforms on a remote resource and returns the
+resulting dom objects as a dom fragment. This allows the developer to bring in external html files, 
+possibly developed by a designer, and work with them unaltered<p> 
+<p>note: Remote resources are pulled down and cached on the client as dom fragments.</p>
+<pre>
+(deftamplate my-template resource-uri [arg1 arg2 ...] 
+  [selector1] (transform arg1)
+  [selector2] (transform arg2))
+</pre>
+<p>Example: <button id="button1">click me</button> <a href="templates/template-demo.html">view remote resource</a></p>
+<div id="template-demo">table will appear here</div>
+<p>The following action is triggered when we click the button</p>
+<pre>
+(em/deftemplate template-demo "/templates/template-demo.html" [fruit-data] 
+                ["#heading1"] (em/content "fruit")  
+                ["thead tr > *:last-child"] (em/content "quantity")
+                ["tbody > tr:not(:first-child)"] (em/remove-node)
+                ["tbody > tr:first-child"] (em/clone-for [fr (vec fruit-data)]
+                                              ["*:first-child"] (em/content (first fr))
+                                              ["*:last-child"] (em/content (str (second fr)))))
+
+(em/at js/document
+  ["#button1"] (em/listen :click #(em/at js/document 
+                                    ["#template-demo"] (em/content (template-demo)))))             
+</pre>
+The code above pull back template-demo.html, replaces the heading with "fruit" and "quantity", deletes all but the 
+first row of the table and finally uses clone-for to duplicate the first row and build the table. 
+
+<h3 id="doc-snippet">deftemplate</h3>
+<p>defsnippet defines a function that performs a set of transforms on a sub section of a remote resource 
+and returns the resulting dom objects as a dom fragment. This allows the developer to bring in external html files
+and use peices to build the final view.<p> 
+<p>note: Remote resources are pulled down and cached on the client as dom fragments.</p>
+<pre>
+(defsnippet my-template resource-uri [arg1 arg2 ...] [selector]
+  [selector1] (transform arg1)
+  [selector2] (transform arg2))
+</pre>
+<p>Example: <button id="button2">click me</button> <a href="templates/template-demo.html">view remote resource</a></p>
+<div id="snippet-demo">table will appear here</div>
+<p>The following action is triggered when we click the button</p>
+<pre>
+(em/defsnippet snippet2 "templates/template-demo.html" ["tbody > *:first-child"] 
+               [fruit quantity] 
+               ["tr > *:first-child"] (em/content fruit)
+               ["tr > *:last-child"] (em/content (str quantity)))
+  
+(em/deftemplate template-demo2 "/templates/template-demo.html" [fruit-data] 
+                ["#heading1"] (em/content "fruit")  
+                ["thead tr > *:last-child"] (em/content "quantity")
+                ["tbody"] (em/content
+                           (map #(snippet2 % (fruit-data %)) (keys fruit-data)))) 
+                           
+(em/at js/document
+  ["#button2"] (em/listen :click #(em/at js/document 
+                                    ["#snippet-demo"] (em/content (template-demo2)))))              
+</pre>
+<p>The code above pull back template-demo.html, replaces the heading with "fruit" and "quantity", and
+finally iterates over the fruit data and calls our snippet to build the rows of the table. </p>
+
+<h3 id="doc-load">wait-for-load</h3>
+<p>Due to the asynchronous nature of pulling in remote resources this helper function it takes
+an function and calls the function once all templates have been loaded.
+</p> 
+<p>note: Remote resources are pulled down and cached on the client as dom fragments.</p>
+<pre>
+(wait-for-load (fn []...))
+</pre>

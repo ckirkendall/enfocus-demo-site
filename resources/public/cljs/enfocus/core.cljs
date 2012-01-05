@@ -43,7 +43,6 @@
     (nodelist? nl) (for [x (range 0 (.length nl))]
                     (aget nl x))))
 
-
 (defn- flatten-nodes-coll [values]
   "takes a set of nodes and nodelists and flattens them"
   (mapcat #(cond (string? %) [(dom/createTextNode %)]
@@ -96,6 +95,18 @@
 
 (defn pix-round [step]
   (if (neg? step) (Math/floor step) (Math/ceil step)))
+
+(defn add-map-attrs 
+  ([elem ats]
+   (when elem 
+     (when (map? ats)
+       (do
+         (doseq [[k v] ats]
+           (add-map-attrs elem k v))
+         elem))))
+  ([elem k v]
+	   (. elem (setAttribute (name k) v))
+   elem))
 
 ;####################################################
 ; The following functions are used to transform
@@ -250,7 +261,6 @@
             cnt (atom (count pnod-col))
             partial-cback (fn []
                             (swap! cnt dec)
-                            (log-debug (str "cnt:" @cnt))
                             (when (= 0 @cnt) 
                               (when (not (nil? callback)) (callback pnodes))
                               (when (not (nil? chain)) (chain pnodes))))] 
@@ -396,6 +406,30 @@
     (fn [pnod]
       (dom/removeNode pnod))))
 
+(defn en-wrap 
+  "wrap and element in a new element defined as :div {:class 'temp'}"
+  [elm mattr]
+  (chainable-standard
+    (fn [pnod]
+      (let [elem (dom/createElement (name elm))]
+        (add-map-attrs elem mattr)
+        (em/at elem (em/content (.cloneNode pnod true)))
+        (em/at pnod (em/do-> (em/after elem)
+                             (em/remove-node)))))))
+
+(defn en-unwrap
+  "replaces a node with all its children"
+  []
+  (chainable-standard
+    (fn [pnod]
+      (let [frag (. js/document (createDocumentFragment))]
+         (em/at frag (em/append (.childNodes pnod)))
+         (log-debug frag)
+         (log-debug pnod)
+         (log-debug (.childNodes pnod))
+         (dom/replaceNode frag pnod)))))
+  
+
 (defn en-set-style 
   "set a list of style elements from the selected nodes"
   [& values]
@@ -420,23 +454,22 @@
   (if @view-port-monitor @view-port-monitor
     (do
       (swap! view-port-monitor #(new goog.dom.ViewportSizeMonitor))
-      (log-debug @view-port-monitor)
       @view-port-monitor)))
       
 
-(defn en-add-event 
+(defn en-listen
   "adding an event to the selected nodes"
   [event func]
   (cond 
-    (= :mouseenter event) (en-add-event :mouseover (mouse-enter-leave func))
-    (= :mouseleave event) (en-add-event :mouseout (mouse-enter-leave func))
+    (= :mouseenter event) (en-listen :mouseover (mouse-enter-leave func))
+    (= :mouseleave event) (en-listen :mouseout (mouse-enter-leave func))
     :else (chainable-standard   
             (fn [pnod]
               (if (and (= :resize event) (identical? js/window pnod)) ;support window resize
                 (events/listen (get-vp-monitor) "resize" func)
                 (events/listen pnod (name event) func))))))
   
-(defn en-remove-event 
+(defn en-remove-listener 
   "adding an event to the selected nodes"
   [& event-list]
   (chainable-standard  
@@ -567,7 +600,6 @@
                        xstep (pix-round (/ (- xpos (.x opos)) steps))
                        ystep (pix-round (/ (- ypos (.y opos)) steps))
                        clone (.clone cpos)]
-                   (log-debug (str cpos ":" xpos ":" ypos ":" xstep ":" ystep))
                    (if (and
                          (or 
                            (zero? xstep)
