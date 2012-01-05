@@ -3,7 +3,7 @@
 <h3>Setup</h3>
 From any leiningen project file:
 <pre>
-[enfocus "0.1.0-SNAPSHOT"]
+[enfocus "0.8.0-SNAPSHOT"]
 </pre>
 Then make sure you have your lib folder on your classpath.
 
@@ -64,7 +64,7 @@ CLJS:
   ["#button1"] (em/content msg))
 
 (em/defaction setup []
-  ["#button1"] (em/listen #(change "I have been clicked")))
+  ["#button1"] (em/listen :click #(change "I have been clicked")))
 	
 (set! (.onload js/window) setup)         
 </pre>
