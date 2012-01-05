@@ -286,7 +286,7 @@
 
 (em/deftemplate doc-template "templates/templates-snippets.html" [])
 
-(em/deftemplate template-demo "/templates/template-demo.html" [fruit-data] 
+(em/deftemplate template-demo "templates/template-demo.html" [fruit-data] 
                 ["#heading1"] (em/content "fruit")  
                 ["thead tr > *:last-child"] (em/content "quantity")
                 ["tbody > tr:not(:first-child)"] (em/remove-node)
@@ -300,7 +300,7 @@
                ["tr > *:first-child"] (em/content fruit)
                ["tr > *:last-child"] (em/content (str quantity)))
   
-(em/deftemplate template-demo2 "/templates/template-demo.html" [fruit-data] 
+(em/deftemplate template-demo2 "templates/template-demo.html" [fruit-data] 
                 ["#heading1"] (em/content "fruit")  
                 ["thead tr > *:last-child"] (em/content "quantity")
                 ["tfoot tr > *:last-child"] (em/content (str (apply + (vals fruit-data))))
