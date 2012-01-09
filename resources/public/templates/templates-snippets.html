@@ -9,7 +9,7 @@
 <h3 id="doc-template">deftemplate</h3>
 <p>The deftemplate construct defines a function that performs a set of transforms on a remote resource and returns the
 resulting dom objects as a dom fragment. This allows the developer to bring in external html files, 
-possibly developed by a designer, and work with them unaltered<p> 
+possibly developed by a designer, and work with them unaltered.<p> 
 <p>note: Remote resources are pulled down and cached on the client as dom fragments.</p>
 <pre>
 (deftamplate my-template resource-uri [arg1 arg2 ...] 
@@ -32,13 +32,13 @@ possibly developed by a designer, and work with them unaltered<p>
   ["#button1"] (em/listen :click #(em/at js/document 
                                     ["#template-demo"] (em/content (template-demo)))))             
 </pre>
-The code above pull back template-demo.html, replaces the heading with "fruit" and "quantity", deletes all but the 
+The code above pulls back template-demo.html, replaces the heading with "fruit" and "quantity", deletes all but the 
 first row of the table and finally uses clone-for to duplicate the first row and build the table. 
 
-<h3 id="doc-snippet">deftemplate</h3>
-<p>defsnippet defines a function that performs a set of transforms on a sub section of a remote resource 
+<h3 id="doc-snippet">defsnippet</h3>
+<p>defsnippet defines a function that performs a set of transforms on a subsection of a remote resource 
 and returns the resulting dom objects as a dom fragment. This allows the developer to bring in external html files
-and use peices to build the final view.<p> 
+and use pieces to build the final view.<p> 
 <p>note: Remote resources are pulled down and cached on the client as dom fragments.</p>
 <pre>
 (defsnippet my-template resource-uri [arg1 arg2 ...] [selector]
@@ -68,7 +68,7 @@ and use peices to build the final view.<p>
 finally iterates over the fruit data and calls our snippet to build the rows of the table. </p>
 
 <h3 id="doc-load">wait-for-load</h3>
-<p>Due to the asynchronous nature of pulling in remote resources this helper function it takes
+<p>Due to the asynchronous nature of pulling in remote resources this helper function is needed. It takes
 an function and calls the function once all templates have been loaded.
 </p> 
 <p>note: Remote resources are pulled down and cached on the client as dom fragments.</p>

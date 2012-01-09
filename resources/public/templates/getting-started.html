@@ -35,11 +35,11 @@ and
     [selector1] (transform1 arg1 ...)
     [selector2] (transform2 arg1 ...))
 </pre>
-<p>In the first case <em>at</em> is passed a node or node set and a transform and calls the 
-transform on each element in the node set. <p>
+<p>In the first case, <em>at</em> is passed a node or a node set and a transform.  This form of <em>at</em>
+calls the transform on each element in the node set. <p>
 <p>A <em>transform</em> is nothing more than a function that takes a set of arguments and returns a function 
 that takes a set of nodes.  In case of the "Hello World!" example above, we see the use of
-(em/content "Hello world!") this call returns a function that takes node or node set
+(em/content "Hello world!"). This call returns a function that takes node or node set
 and replaces the content with "Hello world!"</p>
 <p>In the second case, we see <em>at</em> is passed a node or node set and a set of 
 selector/transform pairs. The selectors are scoped by the node or node set passed in and 
@@ -68,7 +68,7 @@ CLJS:
 	
 (set! (.onload js/window) setup)         
 </pre>
-<p>The <em>defaction</em> construct is use here instead <em>defn</em>.  <em>defaction</em>
+<p>The <em>defaction</em> construct is use here instead of <em>defn</em>.  <em>defaction</em>
 creates a function that calls the <em>at</em> form like discussed above 
 and passes in js/document as the node to be transformed.</p>
 

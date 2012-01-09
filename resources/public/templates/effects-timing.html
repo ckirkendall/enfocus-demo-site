@@ -28,7 +28,7 @@ or
   ["#rz-demo"] (em/resize 200 :curheight 500 20
                  (em/resize 5 :curheight 500 20)))                 
 </pre>
-<p>Notice in the above example, I am using the call back to call another <em>resize</em> transform.</p>
+<p>Notice in the above example, I am using the callback to call another <em>resize</em> transform.</p>
 
 <h3 id="doc-move">Transform: <em>move</em></h3>
 <p>The <em>move</em> effect will change the location of the selected node from its current position to
@@ -52,7 +52,7 @@ or
                  (em/move -20 :cury 500 20)))
                    
 </pre>
-<p>Notice in the above example, I am using the call back to call another <em>move</em> transform.</p>
+<p>Notice in the above example, I am using the callback to call another <em>move</em> transform.</p>
 
 <h3 id="doc-fade">Transform: <em>fade-in</em> and <em>fade-out</em></h3>
 <p>The <em>fade</em> effects will change current opacity of the selected nodes from their current
@@ -71,7 +71,7 @@ or
   ["#fade-demo"] (em/fade-out 500 20
                    (em/fade-in 500 20)))
 </pre>
-<p>Notice in the above example, I am using the call back of fade-out to call another <em>fade-in</em> transform.</p>
+<p>Notice in the above example, I am using the callback of fade-out to call another <em>fade-in</em> transform.</p>
 
 <h3 id="doc-delay">Transform: <em>delay</em></h3>
 <p>The <em>delay</em> effects schedule the transform to be performed a certain number of milliseconds in future.<p> 
