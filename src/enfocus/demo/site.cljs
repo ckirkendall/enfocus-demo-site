@@ -8,7 +8,8 @@
          gstarted-page
          doc-trans-page
          clone-for-demo
-         doc-templates-page)
+         doc-templates-page
+         doc-from-page)
 
 (defn scroll-to []
   (ef/chainable-standard
@@ -31,6 +32,7 @@
               ["#doc-events"] (em/listen :click doc-events-page) 
               ["#doc-effects"] (em/listen :click doc-effects-page)
               ["#doc-remote"] (em/listen :click doc-template-page)
+              ["#doc-extract"] (em/listen :click doc-from-page)
               ["#content-pane"] (em/chain
                                   (em/resize 5 height 500 20)
                                   (em/resize width :curheight 500 20 )
@@ -61,7 +63,7 @@
               [".marea"] (em/listen 
                            :mouseenter
                            #(em/at (.currentTarget %)
-                                   [".sub"] (em/resize :curwidth 115 500 20)
+                                   [".sub"] (em/resize :curwidth 145 500 20)
                                    ["h3"] (em/do-> (em/add-class "blur-highlight")
                                                    (em/delay 200 (em/remove-class "blur-highlight")))))
               [".marea"] (em/listen 
@@ -318,4 +320,38 @@
                                     ["#template-demo"] (em/content (template-demo {"apple" 8, "pear" 9}))))
   ["#button2"] (em/listen :click #(em/at js/document 
                                     ["#snippet-demo"] (em/content (template-demo2 {"apple" 6, "pear" 5})))))
+
+;########################################
+; templates and snippets actions
+;########################################
+
+
+(em/deftemplate doc-from "templates/data-extraction.html" [])
+
+(defn get-attr-demo []
+  (let [values (em/from js/document
+                 :field1 ["#get-attr-field1"] (em/get-attr :value)
+                 :field2 ["#get-attr-field2"] (em/get-attr :value)
+                 :field3 ["input[name='get-attr-field3']"] (em/filter #(.checked %)
+                                                                   (em/get-attr :value)))]
+      (em/at js/document
+        ["#get-attr-demo"] (em/content (pr-str values)))))
+
+(defn get-text-demo []
+  (let [txt (em/from (em/select ["#button2"]) (em/get-text))]
+    (em/at js/document 
+      ["#get-text-demo"] (em/content txt))))
+
+(em/defaction doc-from-page []
+  ["#content-pane"] (em/do->
+                      (em/content (doc-from))
+                      (reset-scroll))         
+  ["#from-link"] (em/listen :click #(em/at js/document ["#doc-from"] (scroll-to)))         
+  ["#get-attr-link"] (em/listen :click #(em/at js/document ["#doc-get-attr"] (scroll-to)))         
+  ["#get-text-link"] (em/listen :click #(em/at js/document ["#doc-get-text"] (scroll-to)))
+  ["#button1"] (em/listen :click get-attr-demo)
+  ["#button2"] (em/listen :click get-text-demo))
+  
+  
+
     
