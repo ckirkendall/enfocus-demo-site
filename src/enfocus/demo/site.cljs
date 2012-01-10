@@ -110,7 +110,7 @@
                                        (em/resize 200 :curheight 500 20)
                                        (em/resize 5 :curheight 500 20))))
   ["#button3"] (em/listen :click clone-for-demo)
-  ["#button4"] (em/listen :click get-attr-demo))
+  ["#button4"] (em/listen :click get-prop-demo))
 
 ;########################################
 ; standard transform page actions
@@ -338,17 +338,22 @@
 
 (em/deftemplate doc-from "templates/data-extraction.html" [])
 
-(defn get-attr-demo []
+(defn get-prop-demo []
   (let [values (em/from js/document
-                 :field1 ["#get-attr-field1"] (em/get-attr :value)
-                 :field2 ["#get-attr-field2"] (em/get-attr :value)
-                 :field3 ["input[name='get-attr-field3']"] (em/filter #(.checked %)
-                                                                   (em/get-attr :value)))]
+                 :field1 ["#get-prop-field1"] (em/get-prop :value)
+                 :field2 ["#get-prop-field2"] (em/get-prop :value)
+                 :field3 ["input[name='get-prop-field3']"] (em/filter #(.checked %)
+                                                                   (em/get-prop :value)))]
       (em/at js/document
-        ["#get-attr-demo"] (em/content (pr-str values)))))
+        ["#get-prop-demo"] (em/content (pr-str values)))))
+
+(defn get-attr-demo []
+  (let [value (em/from (em/select ["#get-attr-img"]) (em/get-attr :src))]
+      (em/at js/document
+        ["#get-attr-demo"] (em/content (pr-str value)))))
 
 (defn get-text-demo []
-  (let [txt (em/from (em/select ["#button2"]) (em/get-text))]
+  (let [txt (em/from (em/select ["#button3"]) (em/get-text))]
     (em/at js/document 
       ["#get-text-demo"] (em/content txt))))
 
@@ -356,11 +361,13 @@
   ["#content-pane"] (em/do->
                       (em/content (doc-from))
                       (reset-scroll))         
-  ["#from-link"] (em/listen :click #(em/at js/document ["#doc-from"] (scroll-to)))         
+  ["#from-link"] (em/listen :click #(em/at js/document ["#doc-from"] (scroll-to))) 
+  ["#get-prop-link"] (em/listen :click #(em/at js/document ["#doc-get-prop"] (scroll-to)))         
   ["#get-attr-link"] (em/listen :click #(em/at js/document ["#doc-get-attr"] (scroll-to)))         
   ["#get-text-link"] (em/listen :click #(em/at js/document ["#doc-get-text"] (scroll-to)))
-  ["#button1"] (em/listen :click get-attr-demo)
-  ["#button2"] (em/listen :click get-text-demo))
+  ["#button1"] (em/listen :click get-prop-demo)
+  ["#button2"] (em/listen :click get-attr-demo)
+  ["#button3"] (em/listen :click get-text-demo))
   
   
 

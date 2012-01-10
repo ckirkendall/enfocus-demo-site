@@ -3,6 +3,7 @@
 
 <ul class="table-contents">
 <li id="from-link">The <em>from</em> form</li>
+<li id="get-prop-link">get-prop</li>
 <li id="get-attr-link">get-attr</li>
 <li id="get-text-link">get-text</li>             
 </ul>
@@ -32,6 +33,34 @@ return map under the given key.</p>
 
 
 
+<h3 id="doc-get-prop">Extractor: <em>get-prop</em></h3>
+<p>The <em>get-prop</em> extractor returns the specified property of the selected nodes. If
+more than one node is passed in it will return a list of values.<p>  
+<pre>
+(get-prop :prop)
+</pre>
+<div>
+<input id="get-prop-field1" value="type here"><br>
+<input id="get-prop-field2" value="type here"><br>
+<input name="get-prop-field3" type="checkbox" value="one">one<br>
+<input name="get-prop-field3" type="checkbox" value="two">two<br>
+<input name="get-prop-field3" type="checkbox" value="three">three<br>
+</div>
+<p>Example: <button id="button1">click me</button></p>
+<div id="get-prop-demo"> </div>
+<p>The following action is triggered when we click the button.</p>
+<pre>
+(defn get-prop-demo []
+  (let [values (em/from js/document
+                 :field1 ["#get-prop-field1"] (em/get-prop :value)
+                 :field2 ["#get-prop-field2"] (em/get-prop :value)
+                 :field3 ["input[name='get-prop-field3']"] (em/filter #(.checked %)
+                                                                   (em/get-prop :value)))]
+      (em/at js/document
+        ["#get-prop-demo"] (em/content (pr-str values)))))                    
+</pre>
+
+
 <h3 id="doc-get-attr">Extractor: <em>get-attr</em></h3>
 <p>The <em>get-attr</em> extractor returns the value or values of the selected nodes. If
 more than one node is passed in it will return a list of values.<p>  
@@ -39,24 +68,16 @@ more than one node is passed in it will return a list of values.<p>
 (get-attr :attr)
 </pre>
 <div>
-<input id="get-attr-field1" value="type here"><br>
-<input id="get-attr-field2" value="type here"><br>
-<input name="get-attr-field3" type="checkbox" value="one">one<br>
-<input name="get-attr-field3" type="checkbox" value="two">two<br>
-<input name="get-attr-field3" type="checkbox" value="three">three<br>
+<img id="get-attr-img" src="http://clojure.org/space/showimage/clojure-icon.gif">
 </div>
-<p>Example: <button id="button1">click me</button></p>
+<p>Example: <button id="button2">get img src</button></p>
 <div id="get-attr-demo"> </div>
 <p>The following action is triggered when we click the button.</p>
 <pre>
 (defn get-attr-demo []
-  (let [values (em/from js/document
-                 :field1 ["#get-attr-field1"] (em/get-attr :value)
-                 :field2 ["#get-attr-field2"] (em/get-attr :value)
-                 :field3 ["input[name='get-attr-field3']"] (em/filter #(.checked %)
-                                                                   (em/get-attr :value)))]
+  (let [value (em/from (em/select ["#get-attr-img"]) (em/get-attr :src))]
       (em/at js/document
-        ["#get-attr-demo"] (em/content (pr-str values)))))                     
+        ["#get-attr-demo"] (em/content (pr-str value)))))                    
 </pre>
 
 <h3 id="doc-get-text">Extractor: <em>get-text</em></h3>
@@ -66,12 +87,12 @@ more than one node is passed in it will return a list of values.<p>
 (get-text)
 </pre>
 <div>
-<p>Example: <button id="button2">click me</button></p>
+<p>Example: <button id="button3">click me</button></p>
 <div id="get-text-demo"> </div>
 <p>The following action is triggered when we click the button.</p>
 <pre>
 (defn get-text-demo []
-  (let [txt (em/from (em/select ["#button2"]) (em/get-text))]
+  (let [txt (em/from (em/select ["#button3"]) (em/get-text))]
     (em/at js/document 
       ["#get-text-demo"] (em/content txt))))  
 </pre>
