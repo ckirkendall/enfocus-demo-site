@@ -120,3 +120,27 @@ effects can be chained.</p>
             ["*:first-child"] (em/content (first fr))
             ["*:last-child"] (em/content (str (second fr)))))))
 </pre>
+
+<h3>Getting Data <em>from</em> the DOM</h3>
+<p>Below is an example of using the <em>from</em> form with the get-attr extractor and some filtering to
+get data out of a form.</p>
+<div>
+<input id="get-attr-field1" value="type here"><br>
+<input id="get-attr-field2" value="type here"><br>
+<input name="get-attr-field3" type="checkbox" value="one">one<br>
+<input name="get-attr-field3" type="checkbox" value="two">two<br>
+<input name="get-attr-field3" type="checkbox" value="three">three<br>
+</div>
+<p>Example: <button id="button4">click me</button></p>
+<div id="get-attr-demo"> </div>
+<p>The following action is triggered when we click the button.</p>
+<pre>
+(defn get-attr-demo []
+  (let [values (em/from js/document
+                 :field1 ["#get-attr-field1"] (em/get-attr :value)
+                 :field2 ["#get-attr-field2"] (em/get-attr :value)
+                 :field3 ["input[name='get-attr-field3']"] (em/filter #(.checked %)
+                                                                   (em/get-attr :value)))]
+      (em/at js/document
+        ["#get-attr-demo"] (em/content (pr-str values)))))                     
+</pre>

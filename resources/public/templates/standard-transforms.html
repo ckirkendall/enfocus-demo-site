@@ -20,6 +20,7 @@
 <li id="unwrap-link">unwrap</li>
 <li id="set-style-link">set-style</li>
 <li id="remove-style-link">remove-style</li>
+<li id="filter-link">filter</li>
 </ul>
 
 <h3 id="doc-at">The <u>at</u> Form</h3>
@@ -42,7 +43,6 @@ that takes a set of nodes.</p>
 selector/transform pairs. The selectors are scoped by the node or node set passed in and 
 the results of each selector is passed on to its partner transformation.</p> 
 <p>A <em>selector</em> is a string representing a <a href="http://www.w3schools.com/cssref/css_selectors.asp">CSS3 compliant selector</a>. 
-
 
 
 <h3 id="doc-content">Transform: <em>content</em></h3>
@@ -322,4 +322,20 @@ CSS:
 .highlight {
 border: 2px solid #ff3333;		
 }
+</pre>
+
+<h3 id="doc-filter">Transform: <em>filter</em></h3>
+<p>The <em>filter</em> apply a test function to the node an only if the test
+function returns true<p>  
+<pre>
+(filter test-func transform)
+</pre>
+<p>Example: <button id="button18">check email</button><input id="email-field" type="text" value="invalid-email">
+<p>The following action is triggered when we click the button.</p>
+<pre>
+(em/defaction filter-demo []
+  ["#email-field"] (em/filter #(> 0 (. (.value %) (indexOf "@")))
+  					 (em/set-style :background-color "red"))
+  ["#email-field"] (em/filter #(<= 0 (. (.value %) (indexOf "@")))
+  					 (em/set-style :background-color "green")))    
 </pre>

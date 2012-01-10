@@ -8,6 +8,7 @@
          gstarted-page
          doc-trans-page
          clone-for-demo
+         get-attr-demo
          doc-templates-page
          doc-from-page)
 
@@ -108,7 +109,8 @@
                          ["#rz-demo"] (em/chain 
                                        (em/resize 200 :curheight 500 20)
                                        (em/resize 5 :curheight 500 20))))
-  ["#button3"] (em/listen :click clone-for-demo))
+  ["#button3"] (em/listen :click clone-for-demo)
+  ["#button4"] (em/listen :click get-attr-demo))
 
 ;########################################
 ; standard transform page actions
@@ -174,6 +176,12 @@
 (em/defaction remove-style-demo []
   ["#button17"] (em/remove-style :border))
 
+(em/defaction filter-demo []
+  ["#email-field"] (em/filter #(> 0 (. (.value %) (indexOf "@")))
+  					 (em/set-style :background-color "red"))
+  ["#email-field"] (em/filter #(<= 0 (. (.value %) (indexOf "@")))
+  					 (em/set-style :background-color "green")))  
+
 (em/defaction doc-trans-page [] 
   ["#content-pane"] (em/do->
                       (em/content (doc-trans))
@@ -196,6 +204,7 @@
   ["#unwrap-link"] (em/listen :click #(em/at js/document ["#doc-unwrap"] (scroll-to)))
   ["#set-style-link"] (em/listen :click #(em/at js/document ["#doc-set-style"] (scroll-to)))
   ["#remove-style-link"] (em/listen :click #(em/at js/document ["#doc-remove-style"] (scroll-to)))
+  ["#filter-link"] (em/listen :click #(em/at js/document ["#doc-filter"] (scroll-to)))
   ["#button1"] (em/listen :click content-demo)
   ["#button2"] (em/listen :click html-content-demo)
   ["#button3"] (em/listen :click set-attr-demo)
@@ -212,7 +221,8 @@
   ["#button14"] (em/listen :click wrap-demo)
   ["#button15"] (em/listen :click unwrap-demo)
   ["#button16"] (em/listen :click set-style-demo)
-  ["#button17"] (em/listen :click remove-style-demo))
+  ["#button17"] (em/listen :click remove-style-demo)
+  ["#button18"] (em/listen :click filter-demo))
 
 ;########################################
 ; handling events page actions

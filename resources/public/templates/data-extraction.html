@@ -8,7 +8,7 @@
 </ul>
 
 <h3 id="doc-from">The <em>from</em> Form</h3>
-<p>To get data from the dom we use the <em>from</em> form.   It comes in two basic forms listed below:</p>
+<p>To get data from the dom we use the <em>from</em> form. It comes in two basic forms listed below:</p>
 <pre>
 (from a-node (extractor arg1 ...))
 -> returns a list or single value
@@ -49,13 +49,14 @@ more than one node is passed in it will return a list of values.<p>
 <div id="get-attr-demo"> </div>
 <p>The following action is triggered when we click the button.</p>
 <pre>
-(defn get-attr-demo 
+(defn get-attr-demo []
   (let [values (em/from js/document
                  :field1 ["#get-attr-field1"] (em/get-attr :value)
                  :field2 ["#get-attr-field2"] (em/get-attr :value)
-                 :field3 ["input[name='get-attr-field3']:checked"] (em/get-attr :value)))]
+                 :field3 ["input[name='get-attr-field3']"] (em/filter #(.checked %)
+                                                                   (em/get-attr :value)))]
       (em/at js/document
-        ["#get-attr-demo"] (em/content (pr-str values))))                        
+        ["#get-attr-demo"] (em/content (pr-str values)))))                     
 </pre>
 
 <h3 id="doc-get-text">Extractor: <em>get-text</em></h3>
@@ -69,8 +70,8 @@ more than one node is passed in it will return a list of values.<p>
 <div id="get-text-demo"> </div>
 <p>The following action is triggered when we click the button.</p>
 <pre>
-(defn get-text-demo 
-  (let [txt (em/from (em/select ["#button2"]) (get-text))]
+(defn get-text-demo []
+  (let [txt (em/from (em/select ["#button2"]) (em/get-text))]
     (em/at js/document 
-      ["#get-text-demo"] (em/content txt))))
+      ["#get-text-demo"] (em/content txt))))  
 </pre>
