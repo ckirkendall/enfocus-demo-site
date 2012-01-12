@@ -3,9 +3,9 @@
 <h3>Setup</h3>
 From any leiningen project file:
 <pre>
-[enfocus "0.8.0-SNAPSHOT"]
+[enfocus "0.9.0-SNAPSHOT"]
 </pre>
-Then make sure you have your lib folder on your classpath.
+Then make sure you have your lib folder on your classpath. Note: There is a breaking change between 0.8.0-SNAPSHOT and 0.9.0-SNAPSHOT around no longer needing the step-size in effects.
 
 For the best development experience, try out cljs-watch. If you do, you'll need to replace the goog.jar in your CLOJURESCRIPT_HOME/lib with the goog-jar.jar that comes down as a dependency with enfocus.
 
@@ -91,8 +91,8 @@ effects can be chained.</p>
 <pre>
 (em/defaction resize-div [width] 
   ["#rz-demo"] (em/chain 
-                 (em/resize width :curheight 500 20)
-                 (em/resize 5 :curheight 500 20)))
+                 (em/resize width :curheight 500)
+                 (em/resize 5 :curheight 500)))
 
 (em/defaction setup []
   ["#button2"] (em/listen #(resize-div 200)))

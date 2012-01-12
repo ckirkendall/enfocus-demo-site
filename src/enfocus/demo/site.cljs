@@ -26,7 +26,7 @@
 (em/defaction setup-pane [width height]
               ["#menu"] (em/delay 1000 (em/do->
                                          (em/set-style :display "inline")
-                                         (em/fade-in 1000 20)))
+                                         (em/fade-in 1000)))
               ["#home-button"] (em/listen :click home-page)
               ["#gstarted-button"] (em/listen :click gstarted-page)
               ["#doc-trans"] (em/listen :click doc-trans-page)
@@ -35,15 +35,15 @@
               ["#doc-remote"] (em/listen :click doc-template-page)
               ["#doc-extract"] (em/listen :click doc-from-page)
               ["#content-pane"] (em/chain
-                                  (em/resize 5 height 500 20)
-                                  (em/resize width :curheight 500 20 )
+                                  (em/resize 5 height 500)
+                                  (em/resize width :curheight 500)
                                   (em/content (home))))
 
 
               
 (em/defaction resize-pane [width height]
               ["#content-pane"] (em/do->
-                                  (em/resize width height 200 20))) 
+                                  (em/resize width height 200))) 
 
 (defn resize-content-pane []
   (let [size (dom/getViewportSize)
@@ -64,13 +64,13 @@
               [".marea"] (em/listen 
                            :mouseenter
                            #(em/at (.currentTarget %)
-                                   [".sub"] (em/resize :curwidth 145 500 20)
+                                   [".sub"] (em/resize :curwidth 145 500)
                                    ["h3"] (em/do-> (em/add-class "blur-highlight")
                                                    (em/delay 200 (em/remove-class "blur-highlight")))))
               [".marea"] (em/listen 
                            :mouseleave
                            #(em/at (.currentTarget %)
-                                   [".sub"] (em/resize :curwidth 0 500 20))))
+                                   [".sub"] (em/resize :curwidth 0 500))))
               
 
 
@@ -107,8 +107,8 @@
                  :click 
                  #(em/at js/document 
                          ["#rz-demo"] (em/chain 
-                                       (em/resize 200 :curheight 500 20)
-                                       (em/resize 5 :curheight 500 20))))
+                                       (em/resize 200 :curheight 500)
+                                       (em/resize 5 :curheight 500))))
   ["#button3"] (em/listen :click clone-for-demo)
   ["#button4"] (em/listen :click get-prop-demo))
 
@@ -257,24 +257,24 @@
 (em/deftemplate doc-effect "templates/effects-timing.html" [])
 
 (em/defaction resize-demo [] 
-  ["#rz-demo"] (em/resize 200 :curheight 500 20
-                 (em/resize 5 :curheight 500 20)))       
+  ["#rz-demo"] (em/resize 200 :curheight 500
+                 (em/resize 5 :curheight 500)))       
 
 (em/defaction move-demo [] 
-  ["#mv-demo"] (em/move 300 :cury 500 20
-                 (em/move -20 :cury 500 20)))
+  ["#mv-demo"] (em/move 300 :cury 500
+                 (em/move -20 :cury 500)))
 
 (em/defaction fade-demo [] 
-  ["#fade-demo"] (em/fade-out 500 20
-                   (em/fade-in 500 20)))
+  ["#fade-demo"] (em/fade-out 500
+                   (em/fade-in 500)))
 
 (em/defaction delay-demo [] 
-  ["#delay-demo"] (em/do-> (em/resize 200 :curheight 500 20)
-                           (em/delay 2000 (em/resize 50 :curheight 500 20))))
+  ["#delay-demo"] (em/do-> (em/resize 200 :curheight 500)
+                           (em/delay 2000 (em/resize 50 :curheight 500))))
 
 (em/defaction chain-demo [] 
-  ["#chain-demo"] (em/chain (em/resize 200 :curheight 500 20)
-                            (em/resize 5 :curheight 500 20)))
+  ["#chain-demo"] (em/chain (em/resize 200 :curheight 500)
+                            (em/resize 5 :curheight 500)))
 
 (em/defaction doc-effects-page []
   ["#content-pane"] (em/do->

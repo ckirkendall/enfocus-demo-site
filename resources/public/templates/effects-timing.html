@@ -25,8 +25,8 @@ or
 <p>The following action is triggered when we click the button</p>
 <pre>
 (em/defaction resize-demo [] 
-  ["#rz-demo"] (em/resize 200 :curheight 500 20
-                 (em/resize 5 :curheight 500 20)))                 
+  ["#rz-demo"] (em/resize 200 :curheight 500
+                 (em/resize 5 :curheight 500)))                 
 </pre>
 <p>Notice in the above example, I am using the callback to call another <em>resize</em> transform.</p>
 
@@ -48,8 +48,8 @@ or
 <p>The following action is triggered when we click the button</p>
 <pre>
 (em/defaction move-demo [] 
-  ["#mv-demo"] (em/move 300 :cury 500 20
-                 (em/move -20 :cury 500 20)))
+  ["#mv-demo"] (em/move 300 :cury 500
+                 (em/move -20 :cury 500)))
                    
 </pre>
 <p>Notice in the above example, I am using the callback to call another <em>move</em> transform.</p>
@@ -68,8 +68,8 @@ or
 <p>The following action is triggered when we click the button</p>
 <pre>
 (em/defaction fade-demo [] 
-  ["#fade-demo"] (em/fade-out 500 20
-                   (em/fade-in 500 20)))
+  ["#fade-demo"] (em/fade-out 500
+                   (em/fade-in 500)))
 </pre>
 <p>Notice in the above example, I am using the callback of fade-out to call another <em>fade-in</em> transform.</p>
 
@@ -83,8 +83,8 @@ or
 <p>The following action is triggered when we click the button</p>
 <pre>
 (em/defaction delay-demo [] 
-  ["#delay-demo"] (em/do-> (em/resize 200 :curheight 500 20)
-                           (em/delay 2000 (em/resize 50 :curheight 500 20))))
+  ["#delay-demo"] (em/do-> (em/resize 200 :curheight 500)
+                           (em/delay 2000 (em/resize 50 :curheight 500))))
 </pre>
 
 <h3 id="doc-chain">Transform: <em>chain</em></h3>
@@ -98,6 +98,6 @@ so one effect will start after the previous effect has finished.<p>
 <p>The following action is triggered when we click the button</p>
 <pre>
 (em/defaction chain-demo [] 
-  ["#chain-demo"] (em/chain (em/resize 200 :curheight 500 20)
-                            (em/resize 5 :curheight 500 20)))
+  ["#chain-demo"] (em/chain (em/resize 200 :curheight 500)
+                            (em/resize 5 :curheight 500)))
 </pre>
