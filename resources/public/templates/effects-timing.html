@@ -16,9 +16,11 @@ when the exact value is not known.</p>
 <pre>
 (resize width height)
 or
-(resize width height total-time step-in-mills)
+(resize width height total-time)
 or
-(resize width height total-time step (fn callbk [node] ..))
+(resize width height total-time (fn callbk [node] ..))
+or
+(resize width height total-time (fn callbk [node] ..) accelerator)
 </pre>
 <p>Example: <button id="button1">click me</button></p>
 <div id="rz-demo" style="width: 5px; height: 10px; background-color: #33ff33;"> </div>
@@ -39,9 +41,11 @@ when the exact value is not known</p>
 <pre>
 (move x y)
 or
-(move x y total-time step-in-mills)
+(move x y total-time)
 or
-(move x y total-time step (fn callbk [node] ..))
+(move x y total-time (fn callbk [node] ..))
+or
+(move x y total-time (fn callbk [node] ..) accelerator)
 </pre>
 <p>Example: <button id="button2">click me</button></p>
 <div id="mv-demo" style="position: fixed; top: 50%; left: -20px; width: 20px; height: 20px; background-color: #33ff33;"> </div>
@@ -59,9 +63,11 @@ or
 opacity to 0 and 1, respectively, over a specific time frame and step size.<p>
 <p>Note: There are plans to replace fade-in and fade-out, with a change-opacity effect, so use with caution.</p>
 <pre>
-(fade-in total-time step-in-mills)
+(fade-in total-time)
 or
-(fade-in total-time step (fn callbk [node] ..))
+(fade-in total-time (fn callbk [node] ..))
+or
+(fade-in total-time (fn callbk [node] ..) accelerator)
 </pre>
 <p>Example: <button id="button3">click me</button></p>
 <div id="fade-demo" style="width: 50px; height: 50px; background-color: #33ff33;"> </div>
