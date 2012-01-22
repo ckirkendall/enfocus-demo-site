@@ -20,7 +20,7 @@ be found <a href="http://closure-library.googlecode.com/svn/docs/class_goog_even
 <pre>
 (em/at js/document
   ["#button1"] (em/listen :click 
-                          #(em/at (.currentTarget %) 
+                          #(em/at (.-currentTarget %) 
                              (em/content "I have been replaced"))))       
 </pre>
 <p>Notice in the above example, we are using the <em>at</em> form as event handler.</p>
@@ -38,9 +38,9 @@ second defaction is triggered when we click the button.</p>
 (em/at js/document
   ["#remove-demo"] (do->
                      (em/listen :mouseenter 
-                                #(at (.currentTarget %) (em/add-class "highlight"))) 
+                                #(at (.-currentTarget %) (em/add-class "highlight"))) 
                      (em/listen :mouseleave 
-                                #(at (.currentTarget %) (em/remove-class "highlight"))))) 
+                                #(at (.-currentTarget %) (em/remove-class "highlight"))))) 
 
 (em/defaction remove-demo []
   ["#remove-demo"] (em/remove-listener :mouseenter :mouseleave))   

@@ -54,7 +54,7 @@ more than one node is passed in it will return a list of values.<p>
   (let [values (em/from js/document
                  :field1 ["#get-prop-field1"] (em/get-prop :value)
                  :field2 ["#get-prop-field2"] (em/get-prop :value)
-                 :field3 ["input[name='get-prop-field3']"] (em/filter #(.checked %)
+                 :field3 ["input[name='get-prop-field3']"] (em/filter #(.-checked %)
                                                                    (em/get-prop :value)))]
       (em/at js/document
         ["#get-prop-demo"] (em/content (pr-str values)))))                    

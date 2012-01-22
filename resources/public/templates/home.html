@@ -16,10 +16,10 @@ following code.</p>
 (em/defaction setup-pane [width height]
               ["#menu"] (em/delay 1000 (em/do->
                                          (em/set-style :display "inline")
-                                         (em/fade-in 1000 20)))
+                                         (em/fade-in 1000)))
               ["#content-pane"] (em/chain
-                                  (em/resize 5 height 500 20)
-                                  (em/resize width :curheight 500 20)
+                                  (em/resize 5 height 500)
+                                  (em/resize width :curheight 500)
                                   (em/content (home))))
                                   
 (defn init-content-pane []

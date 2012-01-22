@@ -20,7 +20,7 @@
 (defn reset-scroll []
   (ef/chainable-standard
     (fn [nod]
-      (set! (.scrollTop nod) 0))))
+      (set! (.-scrollTop nod) 0))))
 
 
 (em/defaction setup-pane [width height]
@@ -47,15 +47,15 @@
 
 (defn resize-content-pane []
   (let [size (dom/getViewportSize)
-        width (- (.width size) 40)
-        height (- (.height size) 70)]
+        width (- (.-width size) 40)
+        height (- (.-height size) 70)]
     (resize-pane width height)))
 
   
 (defn init-content-pane []
     (let [size (dom/getViewportSize)
-          width (- (.width size) 40)
-          height (- (.height size) 70)]
+          width (- (.-width size) 40)
+          height (- (.-height size) 70)]
       (setup-pane width height)
       (em/at js/window (em/listen :resize resize-content-pane))))
 
@@ -63,18 +63,18 @@
               ["#inner-circle"] (em/listen :click init-content-pane)
               [".marea"] (em/listen 
                            :mouseenter
-                           #(em/at (.currentTarget %)
+                           #(em/at (.-currentTarget %)
                                    [".sub"] (em/resize :curwidth 145 500)
                                    ["h3"] (em/do-> (em/add-class "blur-highlight")
                                                    (em/delay 200 (em/remove-class "blur-highlight")))))
               [".marea"] (em/listen 
                            :mouseleave
-                           #(em/at (.currentTarget %)
+                           #(em/at (.-currentTarget %)
                                    [".sub"] (em/resize :curwidth 0 500))))
               
 
 
-(set! (.onload js/window) start)
+(set! (.-onload js/window) start)
 
 
 ;#######################################
@@ -101,7 +101,7 @@
                       (reset-scroll))
   ["#button1"] (em/listen 
                  :click 
-                 #(em/at (.currentTarget %) 
+                 #(em/at (.-currentTarget %) 
                          (em/content "I have been clicked")))
   ["#button2"] (em/listen 
                  :click 
@@ -177,9 +177,9 @@
   ["#button17"] (em/remove-style :border))
 
 (em/defaction filter-demo []
-  ["#email-field"] (em/filter #(> 0 (. (.value %) (indexOf "@")))
+  ["#email-field"] (em/filter #(> 0 (. (.-value %) (indexOf "@")))
   					 (em/set-style :background-color "red"))
-  ["#email-field"] (em/filter #(<= 0 (. (.value %) (indexOf "@")))
+  ["#email-field"] (em/filter #(<= 0 (. (.-value %) (indexOf "@")))
   					 (em/set-style :background-color "green")))  
 
 (em/defaction doc-trans-page [] 
@@ -242,11 +242,11 @@
   ["#remove-link"] (em/listen :click #(em/at js/document ["#doc-remove"] (scroll-to)))         
   ["#support-link"] (em/listen :click #(em/at js/document ["#doc-support"] (scroll-to)))
   ["#button1"] (em/listen :click 
-                          #(em/at (.currentTarget %) 
+                          #(em/at (.-currentTarget %) 
                              (em/content "I have been replaced")))
   ["#remove-demo"] (em/do->
-                     (em/listen :mouseenter #(em/at (.currentTarget %) (em/add-class "highlight"))) 
-                     (em/listen :mouseleave #(em/at (.currentTarget %) (em/remove-class "highlight"))))
+                     (em/listen :mouseenter #(em/at (.-currentTarget %) (em/add-class "highlight"))) 
+                     (em/listen :mouseleave #(em/at (.-currentTarget %) (em/remove-class "highlight"))))
   ["#button2"] (em/listen :click remove-demo))     
 
 
@@ -342,7 +342,7 @@
   (let [values (em/from js/document
                  :field1 ["#get-prop-field1"] (em/get-prop :value)
                  :field2 ["#get-prop-field2"] (em/get-prop :value)
-                 :field3 ["input[name='get-prop-field3']"] (em/filter #(.checked %)
+                 :field3 ["input[name='get-prop-field3']"] (em/filter #(.-checked %)
                                                                    (em/get-prop :value)))]
       (em/at js/document
         ["#get-prop-demo"] (em/content (pr-str values)))))

@@ -334,8 +334,8 @@ function returns true<p>
 <p>The following action is triggered when we click the button.</p>
 <pre>
 (em/defaction filter-demo []
-  ["#email-field"] (em/filter #(> 0 (. (.value %) (indexOf "@")))
+  ["#email-field"] (em/filter #(> 0 (. (.-value %) (indexOf "@")))
   					 (em/set-style :background-color "red"))
-  ["#email-field"] (em/filter #(<= 0 (. (.value %) (indexOf "@")))
+  ["#email-field"] (em/filter #(<= 0 (. (.-value %) (indexOf "@")))
   					 (em/set-style :background-color "green")))    
 </pre>
