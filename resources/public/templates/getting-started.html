@@ -20,7 +20,7 @@ Every great journey starts with "Hello world!"
   (em/at js/document
     ["body"] (em/content "Hello world!"))
 
-(set! (.onload js/window) start)         
+(set! (.-onload js/window) start)         
 </pre>
 <h3>The <u>at</u> Form</h3>
 <p>At the core to understanding Enfocus is the <em>at</em> form used in the 
@@ -65,7 +65,7 @@ CLJS:
 (em/defaction setup []
   ["#button1"] (em/listen :click #(change "I have been clicked")))
 	
-(set! (.onload js/window) setup)         
+(set! (.-onload js/window) setup)         
 </pre>
 <p>The <em>defaction</em> construct is use here instead of <em>defn</em>.  <em>defaction</em>
 creates a function that calls the <em>at</em> form like discussed above 
@@ -96,7 +96,7 @@ effects can be chained.</p>
 (em/defaction setup []
   ["#button2"] (em/listen #(resize-div 200)))
 	
-(set! (.onload js/window) setup)         
+(set! (.-onload js/window) setup)         
 </pre>
 
 <h3>A bit more complicated example with clone-for</h3>
@@ -138,7 +138,7 @@ get data out of a form.</p>
   (let [values (em/from js/document
                  :field1 ["#get-prop-field1"] (em/get-prop :value)
                  :field2 ["#get-prop-field2"] (em/get-prop :value)
-                 :field3 ["input[name='get-prop-field3']"] (em/filter #(.checked %)
+                 :field3 ["input[name='get-prop-field3']"] (em/filter #(.-checked %)
                                                                    (em/get-prop :value)))]
       (em/at js/document
         ["#get-prop-demo"] (em/content (pr-str values)))))                   

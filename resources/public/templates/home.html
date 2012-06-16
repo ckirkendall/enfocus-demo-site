@@ -24,14 +24,14 @@ following code.</p>
                                   
 (defn init-content-pane []
     (let [size (dom/getViewportSize)
-          width (- (.width size) 40)
-          height (- (.height size) 70)]
+          width (- (.-width size) 40)
+          height (- (.-height size) 70)]
       (setup-pane width height))))
       
 (em/defaction start [] 
               ["#inner-circle"] (em/listen :click init-content-pane))
               
-(set! (.onload js/window) #(start))              
+(set! (.-onload js/window) #(start))              
 </pre>
 <p>In this small piece of code we can see many of key features of enfocus: content manipulation, style manipulation, 
 remote resources, complex effects, event handling and management of timed or synchronized events.  All this, and we have only seen 20 lines of code!
