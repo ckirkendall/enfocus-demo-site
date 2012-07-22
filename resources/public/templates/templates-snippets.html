@@ -40,8 +40,8 @@ first row of the table and finally uses clone-for to duplicate the first row and
 and returns the resulting dom objects as a dom fragment. This allows the developer to bring in external html files
 and use pieces to build the final view.<p> 
 <p>note: Remote resources are pulled down and cached on the client as dom fragments.</p>
-<pre>
-(defsnippet my-template resource-uri [arg1 arg2 ...] [selector]
+<pre>[arg1 arg2 ...]
+(defsnippet my-snippet resource-uri [selector] [arg1 arg2 ...]
   [selector1] (transform arg1)
   [selector2] (transform arg2))
 </pre>
