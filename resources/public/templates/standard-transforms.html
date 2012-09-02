@@ -21,6 +21,7 @@
 <li id="set-style-link">set-style</li>
 <li id="remove-style-link">remove-style</li>
 <li id="filter-link">filter</li>
+<li id="focus-link">focus & blur</li>
 </ul>
 
 <h3 id="doc-at">The <u>at</u> Form</h3>
@@ -116,7 +117,7 @@ background-color: #33ff33;
 <p>The following action is triggered when we click the button.</p>
 <pre>
 (em/defaction add-class-demo []
-  ["#button5"] (em/add-class "highlight""))        
+  ["#button5"] (em/add-class "highlight"))        
 </pre>
 <pre>
 CSS:
@@ -338,4 +339,18 @@ function returns true<p>
   					 (em/set-style :background-color "red"))
   ["#email-field"] (em/filter #(<= 0 (. (.-value %) (indexOf "@")))
   					 (em/set-style :background-color "green")))    
+</pre>
+
+<h3 id="doc-focus">Transforms: <em>focus & blur</em></h3>
+<p>The <em>focus & blur</em> transforms apply set the browser focus to or away from the selected node.<p>  
+<pre>
+(focus) & (blur)
+</pre>
+<p>Example: <button id="button19">focus</button> <button id="button20">blur</button><input id="focus-field" type="text" value="focus">
+<p>The following action is triggered when we click the buttons.</p>
+<pre>
+(em/defaction focus-demo []
+  ["#focus-field"] (em/focus))
+(em/defaction blur-demo []
+  ["#focus-field"] (em/blur))
 </pre>

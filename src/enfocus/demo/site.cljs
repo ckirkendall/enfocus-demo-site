@@ -182,6 +182,12 @@
   ["#email-field"] (em/filter #(<= 0 (. (.-value %) (indexOf "@")))
   					 (em/set-style :background-color "green")))  
 
+(em/defaction focus-demo []
+  ["#focus-field"] (em/focus))
+
+(em/defaction blur-demo []
+  ["#focus-field"] (em/blur))
+
 (em/defaction doc-trans-page [] 
   ["#content-pane"] (em/do->
                       (em/content (doc-trans))
@@ -222,7 +228,9 @@
   ["#button15"] (em/listen :click unwrap-demo)
   ["#button16"] (em/listen :click set-style-demo)
   ["#button17"] (em/listen :click remove-style-demo)
-  ["#button18"] (em/listen :click filter-demo))
+  ["#button18"] (em/listen :click filter-demo)
+  ["#button19"] (em/listen :click focus-demo)
+  ["#button20"] (em/listen :click blur-demo))
 
 ;########################################
 ; handling events page actions
