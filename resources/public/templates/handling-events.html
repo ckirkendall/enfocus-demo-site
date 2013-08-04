@@ -1,53 +1,76 @@
-<div class="content-page">
-<h1>Handling Events</h1>
-<ul class="table-contents">
-<li id="listen-link">listen</li>
-<li id="remove-link">remove-listener</li>             
-<li id="support-link">supported events</li>
-</ul>
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>Event Handling</h1>
+    <!--<p class="lead">.</p>-->
+  </div>
+</header>
 
-<h3 id="doc-listen">Transform: <em>listen</em></h3>
+<div class="content-page">
+  <div class="row">
+    <div class="span3 bs-docs-sidebar">
+      <ul class="table-contents nav nav-list bs-docs-sidenav">
+        <li id="listen-link"><a>listen</a></li>
+        <li id="remove-link"><a>remove-listeners</a></li>             
+        <li id="support-link"><a>supported events</a></li>
+      </ul>
+    </div>
+
+    <div class="span9">
+      <section id="doc-listen">
+        <div class="page-header">
+          <h3>Transform: <em>listen</em></h3>
+        </div>
+
 <p>The <em>listen</em> transform places an event listener, for the given event, on the nodes returned by the selector.  
 When the event is triggered the event object is passed as a parameter to the function call.<p> 
 <p>The <em>event object</em> is of type goog.event.Event.  Documentation for this object can
 be found <a href="http://closure-library.googlecode.com/svn/docs/class_goog_events_Event.html">here</a>.</p>
  
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (listen :click (fn [event].....))
 </pre>
 <p>Example: <button id="button1">click me</button></p>
 <p>The following action is triggered when we click the button</p>
-<pre>
-(em/at js/document
-  ["#button1"] (em/listen :click 
-                          #(em/at (.-currentTarget %) 
-                             (em/content "I have been replaced"))))       
+<pre class="prettyprint linenums lang-clj">
+(em/at "#button1" (em/listen :click 
+                             #(em/at (.-currentTarget %) 
+                                (em/content "I have been replaced"))))       
 </pre>
 <p>Notice in the above example, we are using the <em>at</em> form as event handler.</p>
+     </section>
 
-<h3 id="doc-remove">Transform: <em>remove-listener</em></h3>
-<p>The <em>remove-listener</em> transform removes listeners for a given event type on all nodes
+      <section id="doc-remove">
+        <div class="page-header">
+          <h3>Transform: <em>remove-listeners</em></h3>
+        </div>
+
+<p>The <em>remove-listeners</em> transform removes listeners for a given event type on all nodes
 returned by the selector.</p>
-<pre>
-(remove-listener :mouseover :mouseout ...)
+<pre class="prettyprint linenums lang-clj">
+(remove-listeners :mouseover :mouseout ...)
 </pre>
 <p>Example: <button id="button2">click me</button><span id="remove-demo">hover over me</span></p>
 <p>The first defaction was called to setup the :mouseenter event on text "hover over me". The
 second defaction is triggered when we click the button.</p>
-<pre>
-(em/at js/document
-  ["#remove-demo"] (do->
-                     (em/listen :mouseenter 
-                                #(at (.-currentTarget %) (em/add-class "highlight"))) 
-                     (em/listen :mouseleave 
-                                #(at (.-currentTarget %) (em/remove-class "highlight"))))) 
+<pre class="prettyprint linenums lang-clj">
+(em/at "#remove-demo" 
+  (do->
+    (em/listen :mouseenter 
+      #(at (.-currentTarget %) (em/add-class "highlight"))) 
+    (em/listen :mouseleave 
+      #(at (.-currentTarget %) (em/remove-class "highlight"))))) 
 
 (em/defaction remove-demo []
-  ["#remove-demo"] (em/remove-listener :mouseenter :mouseleave))   
+  "#remove-demo" (em/remove-listeners :mouseenter :mouseleave))   
 </pre>
+     </section>
+
+      <section id="doc-support">
+        <div class="page-header">
+          <h3>Supported Events</em></h3>
+        </div>
 
 
-<h3 id="doc-support">Supported Events</em></h3>
 <p>All events below have cross browser support:</p>
 <ul>
 <li>:click</li>
@@ -70,3 +93,7 @@ second defaction is triggered when we click the button.</p>
 <li>:input</li>
 <li>:resize - for js/window</li>
 </ul>
+</section>
+</div>
+</div>
+</div>

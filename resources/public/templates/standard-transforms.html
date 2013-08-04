@@ -1,356 +1,527 @@
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>Standard Transforms</h1>
+    <!--<p class="lead">.</p>-->
+  </div>
+</header>
+
 <div class="content-page">
-<h1>Standard Transformations</h1>
-
-<ul class="table-contents">
-<li id="at-link">at form</li>
-<li id="content-link">content</li>             
-<li id="html-content-link">html-content</li>
-<li id="set-attr-link">set-attr</li>
-<li id="remove-attr-link">remove-attr</li>
-<li id="add-class-link">add-class</li>
-<li id="remove-class-link">remove-class</li>
-<li id="do-link">do→</li>
-<li id="append-link">append</li>
-<li id="prepend-link">prepend</li>
-<li id="after-link">after</li>
-<li id="before-link">before</li>
-<li id="substitute-link">substitute</li>
-<li id="clone-for-link">clone-for</li>
-<li id="wrap-link">wrap</li>
-<li id="unwrap-link">unwrap</li>
-<li id="set-style-link">set-style</li>
-<li id="remove-style-link">remove-style</li>
-<li id="filter-link">filter</li>
-<li id="focus-link">focus & blur</li>
-</ul>
-
-<h3 id="doc-at">The <u>at</u> Form</h3>
-<p>At the core to understanding enfocus is the <em>at</em> form.
-  It comes in two basic flavors listed below:</p>
-<pre>
+  <div class="row">
+    <div class="span3 bs-docs-sidebar">
+      <ul class="table-contents nav nav-list bs-docs-sidenav">
+        <li id="at-link"><a>at form</a></li>
+        <li id="selector-link"><a>selectors</a></li>
+        <li id="content-link"><a>content</a></li>             
+        <li id="html-content-link"><a>html-content</a></li>
+        <li id="set-attr-link"><a>set-attr</a></li>
+        <li id="remove-attr-link"><a>remove-attr</a></li>
+        <li id="add-class-link"><a>add-class</a></li>
+        <li id="remove-class-link"><a>remove-class</a></li>
+        <li id="do-link"><a>do→</a></li>
+        <li id="append-link"><a>append</a></li>
+        <li id="prepend-link"><a>prepend</a></li>
+        <li id="after-link"><a>after</a></li>
+        <li id="before-link"><a>before</a></li>
+        <li id="substitute-link"><a>substitute</a></li>
+        <li id="clone-for-link"><a>clone-for</a></li>
+        <li id="wrap-link"><a>wrap</a></li>
+        <li id="unwrap-link"><a>unwrap</a></li>
+        <li id="set-style-link"><a>set-style</a></li>
+        <li id="remove-style-link"><a>remove-style</a></li>
+        <li id="filter-link"><a>filter</a></li>
+        <li id="focus-link"><a>focus & blur</a></li>
+        <li id="rvars-link"><a>replace-vars</a></li>
+        <li id="set-data-link"><a>set-data</a></li>
+      </ul>
+    </div>
+    <div class="span9">
+      <section id="doc-at">
+        <div class="page-header">
+          <h3>The <u>at</u> Form</h3>
+        </div>
+        <p>At the core to understanding enfocus is the <em>at</em> form.
+          It comes in two basic flavors listed below:</p>
+<p>Single Transform</p>
+<pre class="prettyprint linenums lang-clj">
 (at a-node (transform arg1 ...))
 
-and
+;or implied js/document as main node
 
+(at "selector" (transfrom arg1 ...))
+</pre>
+
+<p>Multiple Transforms</p>
+
+<pre class="prettyprint linenums lang-clj">
 (at a-node
-    [selector1] (transform1 arg1 ...)
-    [selector2] (transform2 arg1 ...))
+    "selector1" (transform1 arg1 ...)
+    "selector2" (transform2 arg1 ...))
+
+;or implied js/document as main node
+
+(at "selector1" (transform1 arg1 ...)
+    "selector2" (transform2 arg1 ...))
 </pre>
-<p>In the first case, <em>at</em> is passed a node or node set and a transform and calls the 
-transform on each element in the node set. <p>
-<p>A <em>transform</em> is nothing more than a function that takes a set of arguments and returns a function 
-that takes a set of nodes.</p>
-<p>In the second case, we see <em>at</em> is passed a node or node set and a set of 
-selector/transform pairs. The selectors are scoped by the node or node set passed in and 
-the results of each selector is passed on to its partner transformation.</p> 
-<p>A <em>selector</em> is a string representing a <a href="http://www.w3schools.com/cssref/css_selectors.asp">CSS3 compliant selector</a>. 
+      <p>In the first case, <em>at</em> is passed a node/node set or a
+          selector, and a transform and calls the transform on each element in the node set.  
+          If a selector is passed the root node is defaulted to js/document. <p>
+        <p>A <em>transform</em> is nothing more than a function that takes a set of arguments and returns a function 
+          that takes a node.</p>
+        <p>In the second case, we see <em>at</em> is optionally passed a
+          node or node set followed by selector/transform pairs.  
+          The selectors are scoped by the node or node set, if
+          provided or js/document otherwise, and the results of each
+          selector is passed on to its partner transformation.</p> 
+      </section>
 
 
-<h3 id="doc-content">Transform: <em>content</em></h3>
-<p>The <em>content</em> transform replaces the content nodes returned by the selector with 
-elements in its body. The body can be made up of strings, nodes and/or node sets.<p>  
-<pre>
-(content “xyz” a-node “abc”)
+      <section id="doc-selectors">
+        <div class="page-header">
+          <h3><em>Selectors</em></h3>
+        </div>
+       <p> Enfocus supports four types of selectors:</p>
+
+        <p><a href="http://www.w3schools.coem/cssref/css_selectors.asp">CSS3 Compliant Selector</a></p>
+<pre class="prettyprint linenums lang-clj">
+  (ef/at "#my-id" (ef/content "hello world"))
 </pre>
-<p>Example: <button id="button1">click me</button></p>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+   
+        <p><a href="https://github.com/cgrand/enlive#selectors">Enlive Selector</a></p>
+<pre class="prettyprint linenums lang-clj">
+  (ef/at [:#my-id] (ef/content "hello world"))
+</pre>
+        <p><a href="http://www.w3schools.coem/cssref/css_selectors.asp">XPath Selector</a></p>
+<pre class="prettyprint linenums lang-clj">
+  (ef/at (ef/xpath "//div[@id='my-id']") (ef/content "hello world"))
+</pre>
+        <p>Custom Selectors - these are functions that take a root
+        node and return a node or node-list.</p>
+<pre class="prettyprint linenums lang-clj">
+  (ef/at node #(.children %) (ef/content "hello world"))
+</pre>
+
+      </section>
+
+      <section id="doc-content">
+        <div class="page-header">
+          <h3>Transform: <em>content</em></h3>
+        </div>
+        
+        <p>The <em>content</em> transform replaces the content nodes returned by the selector with 
+          elements in its body. The body can be made up of strings, nodes and/or node sets.<p>  
+<pre class="prettyprint linenums lang-clj">
+ (content “xyz” a-node “abc”)
+</pre>
+        <p>Example: <button id="button1">click me</button></p>
+        <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction content-demo []
-  ["#button1"] (em/content "I have been clicked"))        
+  "#button1" (ef/content "I have been clicked"))        
 </pre>
+     </section>
+      <section id="doc-html-content">
+        <div class="page-header">
+          <h3>Transform: <em>html-content</em></h3>
+        </div>
 
-<h3 id="doc-html-content">Transform: <em>html-content</em></h3>
-<p>The <em>html-content</em> transform converts the html string to a document fragments and 
-replaces the content of the nodes returned by the selector with the fragment.<p>  
-<pre>
+      <p>The <em>html-content</em> transform converts the html string to a document fragments and 
+        replaces the content of the nodes returned by the selector with the fragment.<p>  
+<pre class="prettyprint linenums lang-clj">
 (html-content "&lt;tag&gt;content&lt;tag&gt;")
 </pre>
-<p>Example: <button id="button2">click me</button> <span id="html-content-demo">I will be replaced</span></p>
-<p>The following action is triggered when we click the button</p>
-<pre>
+      <p>Example: <button id="button2">click me</button> <span id="html-content-demo">I will be replaced</span></p>
+      <p>The following action is triggered when we click the button</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction html-content-demo []
-  ["#html-content-demo"] (em/html-content "&lt;span style='color: #ff3333'&gt;I replaced the text&lt;/span&gt;"))        
+  "#html-content-demo" (ef/html-content "&lt;span style='color: #ff3333'&gt;I replaced the text&lt;/span&gt;"))        
 </pre>
+      </section>
+      <section id="doc-set-attr">
+        <div class="page-header">
+          <h3>Transform: <em>set-attr</em></h3>
+        </div>
 
-<h3 id="doc-set-attr">Transform: <em>set-attr</em></h3>
-<p>The <em>set-attr</em> transform will set the value of an attribute on the nodes returned by a selector.<p>  
-<pre>
+      <p>The <em>set-attr</em> transform will set the value of an attribute on the nodes returned by a selector.<p>  
+<pre class="prettyprint linenums lang-clj">
 (set-attr :attr1 "test" :attr2 "test2" ...)
 </pre>
-<p>Example: <button id="button3">click me</button> 
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button3">click me</button> 
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction set-attr-demo []
-  ["#button3"] (em/set-attr :foo "bar"))        
+  "#button3" (ef/set-attr :foo "bar"))        
 </pre>
-<pre>
+<pre class="prettyprint linenums lang-css">
 CSS:
 button[foo=bar] {
-background-color: #33ff33;	
+  background-color: #33ff33;	
 }
 </pre>
+      </section>
+      <section id="doc-remove-attr">
+        <div class="page-header">
+          <h3>Transform: <em>set-remove</em></h3>
+        </div>
 
-<h3 id="doc-remove-attr">Transform: <em>remove-attr</em></h3>
-<p>The <em>remove-attr</em> transform will remove a set of attributes from the nodes returned by a selector.<p>  
-<pre>
+      <p>The <em>remove-attr</em> transform will remove a set of attributes from the nodes returned by a selector.<p>  
+<pre class="prettyprint linenums lang-clj">
 (remove-attr :attr1 :attr2 ...)
 </pre>
-<p>Example: <button id="button4" foo="bar">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button4" foo="bar">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction set-attr-demo []
-  ["#button4"] (em/remove-attr :foo))        
+  "#button4" (ef/remove-attr :foo))        
 </pre>
-<pre>
+<pre class="prettyprint linenums lang-css">
 CSS:
 button[foo=bar] {
-background-color: #33ff33;	
+  background-color: #33ff33;	
 }
 </pre>
+      </section>
+      <section id="doc-add-class">
+        <div class="page-header">
+          <h3>Transform: <em>add-class</em></h3>
+        </div>
 
-<h3 id="doc-add-class">Transform: <em>add-class</em></h3>
-<p>The <em>add-class</em> transform will add a list of classes to the nodes returned by a selector.<p>  
-<pre>
+      <p>The <em>add-class</em> transform will add a list of classes to the nodes returned by a selector.<p>  
+<pre class="prettyprint linenums lang-clj">
 (add-class "class1" "class2" ...)
 </pre>
-<p>Example: <button id="button5">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button5">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction add-class-demo []
-  ["#button5"] (em/add-class "highlight"))        
+  "#button5" (ef/add-class "highlight"))        
 </pre>
-<pre>
+<pre class="prettyprint linenums lang-css">
 CSS:
 .highlight {
-border: 2px solid #ff3333;	
+  border: 2px solid #ff3333;	
 }
 </pre>
+      </section>
+      <section id="doc-remove-class">
+        <div class="page-header">
+          <h3>Transform: <em>remove-class</em></h3>
+        </div>
 
-<h3 id="doc-remove-class">Transform: <em>remove-class</em></h3>
-<p>The <em>remove-class</em> Transform will remove a set of classes from the nodes returned by a selector.<p>  
-<pre>
+      <h3 id="doc-remove-class">Transform: <em>remove-class</em></h3>
+      <p>The <em>remove-class</em> Transform will remove a set of classes from the nodes returned by a selector.<p>  
+<pre class="prettyprint linenums lang-clj">
 (remove-class "class1" "class2" ...)
 </pre>
-<p>Example: <button id="button6" class="highlight">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button6" class="highlight">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction remove-class-demo []
-  ["#button6"] (em/remove-class "highlight"))        
+  "#button6" (ef/remove-class "highlight"))        
 </pre>
-<pre>
+<pre class="prettyprint linenums lang-css">
 CSS:
 .highlight {
-border: 2px solid #ff3333;	
+   border: 2px solid #ff3333;	
 }
 </pre>
+      </section>
+      <section id="doc-do">
+        <div class="page-header">
+          <h3>Transform: <em>do-&gt;</em></h3>
+        </div>
 
-<h3 id="doc-do">Transform: <em>do-></em></h3>
-<p>The <em>do</em> transform will execute a series of transforms on the nodes returned by a selector. </p>
-<p>Note: Effects will be executed asynchronously, if you want synchronization use <em>chain</em>.<p>  
-<pre>
+      <p>The <em>do</em> transform will execute a series of transforms on the nodes returned by a selector. </p>
+      <p>Note: Effects will be executed asynchronously, if you want synchronization use <em>chain</em>.<p>  
+<pre class="prettyprint linenums lang-clj">
 (do-> transformation1 transformation2 ...)
 </pre>
-<p>Example: <button id="button7">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button7">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction do-demo []
-  ["#button7"] (em/do->
-                 (em/add-attr :foo "bar")
-                 (em/add-class "highlight")))       
+  "#button7" (ef/do->
+(ef/add-attr :foo "bar")
+(ef/add-class "highlight")))       
 </pre>
-<pre>
+<pre class="prettyprint linenums lang-css">
 CSS:
 button[foo=bar] {
-background-color: #33ff33;	
+  background-color: #33ff33;	
 }
 .highlight {
-border: 2px solid #ff3333;		
+  border: 2px solid #ff3333;		
 }
 </pre>
+     </section>
+      <section id="doc-append">
+        <div class="page-header">
+          <h3>Transform: <em>append</em></h3>
+        </div>
 
-<h3 id="doc-append">Transform: <em>append</em></h3>
-<p>The <em>append</em> transform will append the content to the existing content of the nodes returned by a selector.<p>  
-<pre>
+      <p>The <em>append</em> transform will append the content to the existing content of the nodes returned by a selector.<p>  
+<pre class="prettyprint linenums lang-clj">
 (append "text" a-node "text" ...)
 </pre>
-<p>Example: <button id="button8">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button8">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction append-demo []
-  ["#button8"] (em/append ":append"))       
+  "#button8" (ef/append ":append"))       
 </pre>
+      </section>
+      <section id="doc-prepend">
+        <div class="page-header">
+          <h3>Transform: <em>prepend</em></h3>
+        </div>
 
-<h3 id="doc-prepend">Transform: <em>prepend</em></h3>
-<p>The <em>prepend</em> transform will prepend the content to the existing content of the nodes returned by a selector.<p>  
-<pre>
+      <p>The <em>prepend</em> transform will prepend the content to the existing content of the nodes returned by a selector.<p>  
+<pre class="prettyprint linenums lang-clj">
 (append "text" a-node "text" ...)
 </pre>
-<p>Example: <button id="button9">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button9">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction prepend-demo []
-  ["#button9"] (em/prepend "prepend:"))      
+  "#button9" (ef/prepend "prepend:"))      
 </pre>
+      </section>
+      <section id="doc-after">
+        <div class="page-header">
+          <h3>Transform: <em>after</em></h3>
+        </div>
 
-<h3 id="doc-after">Transform: <em>after</em></h3>
-<p>The <em>after</em> transform will insert the content after the node returned by a selector.<p>  
-<pre>
+      <p>The <em>after</em> transform will insert the content after the node returned by a selector.<p>  
+<pre class="prettyprint linenums lang-clj">
 (after "text" a-node "text" ...)
 </pre>
-<p>Example: <button id="button10">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button10">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction after-demo []
-  ["#button10"] (em/after ":after"))       
+  "#button10" (ef/after ":after"))       
 </pre>
+      </section>
+      <section id="doc-before">
+        <div class="page-header">
+          <h3>Transform: <em>before</em></h3>
+        </div>
 
-<h3 id="doc-before">Transform: <em>before</em></h3>
-<p>The <em>before</em> transform will insert the content after the node returned by a selector.<p>  
-<pre>
+      <p>The <em>before</em> transform will insert the content after the node returned by a selector.<p>  
+<pre class="prettyprint linenums lang-clj">
 (before "text" a-node "text" ...)
 </pre>
-<p>Example: <button id="button11">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button11">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction before-demo []
-  ["#button11"] (em/before "before:"))      
+  "#button11" (ef/before "before:"))      
 </pre>
+      </section>
+      <section id="doc-sub">
+        <div class="page-header">
+          <h3>Transform: <em>substitute</em></h3>
+        </div>
 
-<h3 id="doc-sub">Transform: <em>substitute</em></h3>
-<p>The <em>substitute</em> transform replaces the node returned by a selector with the content in the body.<p>  
-<pre>
+      <p>The <em>substitute</em> transform replaces the node returned by a selector with the content in the body.<p>  
+<pre class="prettyprint linenums lang-clj">
 (substitute "text" a-node "text" ...)
 </pre>
-<p>Example: <button id="button12">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button12">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction sub-demo []
-  ["#button12"] (em/substitute "I replaced the button"))      
+  "#button12" (ef/substitute "I replaced the button"))      
 </pre>
+      </section>
+      <section id="doc-clone-for">
+        <div class="page-header">
+          <h3>Transform: <em>clone-for</em></h3>
+        </div>
 
-<h3 id="doc-clone-for">Transform: <em>clone-for</em></h3>
-<p>The <em>clone-for</em> transform has a similar syntax and function as the clojure <em>for</em>.  It will sequence through a 
-collection of items and clone the node returned from the selector with each iteration.  This node will be passed to an 
-implicit <em>at</em> form where additional selectors and transformation will modify the cloned node.  Once through the
-entire collection, it will substitute the clone node set for the original node.<p>
-<pre>
+      <p>The <em>clone-for</em> transform has a similar syntax and function as the clojure <em>for</em>.  It will sequence through a 
+        collection of items and clone the node returned from the selector with each iteration.  This node will be passed to an 
+        implicit <em>at</em> form where additional selectors and transformation will modify the cloned node.  Once through the
+        entire collection, it will substitute the clone node set for the original node.<p>
+<pre class="prettyprint linenums lang-clj">
 (clone-for [item items] transformation)
-or 
+  ;or 
 (clone-for [item items] 
   selector1 transformation1
   selector2 transformation2)
 </pre>
-<p>Example: <button id="button13">click me</button> </p>
-<table id="clone-for-demo" border="1">
-<thead>
-<tr><th>fruit</th><th>quantity</th></tr>
-</thead>
-<tbody>
-<tr><td>replace</td><td>me</td></tr>
-</tbody>
-</table>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button13">click me</button> </p>
+      <table id="clone-for-demo" border="1">
+        <thead>
+          <tr><th>fruit</th><th>quantity</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>replace</td><td>me</td></tr>
+        </tbody>
+      </table>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (defn clone-for-demo []
-  (let [fruit-data {"apple" 5, "pear" 6}]
-    (em/at js/document
-       ["#clone-for-demo tbody > tr:first-child"] 
-         (em/clone-for [fr (vec fruit-data)]
-            ["*:first-child"] (em/content (first fr))
-            ["*:last-child"] (em/content (str (second fr)))))))
+(let [fruit-data {"apple" 5, "pear" 6}]
+(ef/at "#clone-for-demo tbody > tr:first-child" 
+  (ef/clone-for [fr (vec fruit-data)]
+    "*:first-child" (ef/content (first fr))
+    "*:last-child"  (ef/content (str (second fr)))))))
 </pre>
+      </section>
+      <section id="doc-wrap">
+        <div class="page-header">
+          <h3>Transform: <em>wrap</em></h3>
+        </div>
 
-<h3 id="doc-wrap">Transform: <em>wrap</em></h3>
-<p>The <em>wrap</em> transform will replace the selected node with newly created node that contains the old node as a child.<p>  
-<pre>
+      <p>The <em>wrap</em> transform will replace the selected node with newly created node that contains the old node as a child.<p>  
+<pre class="prettyprint linenums lang-clj">
 (wrap :div {:attr1 "test" :attr2 "test2" ...)
 </pre>
-<p>Example: <button id="button14">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button14">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction wrap-demo []
-  ["#button14"] (em/wrap :span {:class "highlight"}))      
+  "#button14" (ef/wrap :span {:class "highlight"}))      
 </pre>
-<pre>
+<pre class="prettyprint linenums lang-css">
 CSS:
 .highlight {
-border: 2px solid #ff3333;		
+  border: 2px solid #ff3333;		
 }
 </pre>
+      </section>
+      <section id="doc-unwrap">
+        <div class="page-header">
+          <h3>Transform: <em>unwrap</em></h3>
+        </div>
 
-<h3 id="doc-unwrap">Transform: <em>unwrap</em></h3>
-<p>The <em>unwrap</em> transform replaces the node returned by a selector with its children.<p>  
-<pre>
+      <p>The <em>unwrap</em> transform replaces the node returned by a
+      selector with its children.<p>  
+<pre class="prettyprint linenums lang-clj">
 (unwrap)
 </pre>
-<p>Example: <button id="button15">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button15">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction unwrap-demo []
-  ["#button15"] (em/unwrap))      
+  "#button15" (ef/unwrap))      
 </pre>
-<pre>
+<pre class="prettyprint linenums lang-css">
 CSS:
 .highlight {
-border: 2px solid #ff3333;		
+  border: 2px solid #ff3333;		
 }
 </pre>
-<h3 id="doc-set-style">Transform: <em>set-style</em></h3>
-<p>The <em>set-style</em> transform sets a style property on selected nodes style object.<p>  
-<pre>
+      </section>
+      <section id="doc-set-style">
+        <div class="page-header">
+          <h3>Transform: <em>set-style</em></h3>
+        </div>
+
+      <p>The <em>set-style</em> transform sets a style property on selected nodes style object.<p>  
+<pre class="prettyprint linenums lang-clj">
 (set-style :background-color "#ff3333" :border "1px solid #000"...)
 </pre>
-<p>Example: <button id="button16">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button16">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction set-style-demo []
-  ["#button16"] (em/set-style :border "2px solid blue"))      
+  "#button16" (ef/set-style :border "2px solid blue"))      
 </pre>
+      </section>
+      <section id="doc-remove-style">
+        <div class="page-header">
+          <h3>Transform: <em>remove-style</em></h3>
+        </div>
 
-<h3 id="doc-remove-style">Transform: <em>remove-style</em></h3>
-<p>The <em>remove-style</em> transform removes a style property on selected nodes style object.<p>  
-<pre>
+      <p>The <em>remove-style</em> transform removes a style property on selected nodes style object.<p>  
+<pre class="prettyprint linenums lang-clj">
 (remove-style :background-color :border)
 </pre>
-<p>Example: <button id="button17" style="border: 2px solid blue;">click me</button>
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button17" style="border: 2px solid blue;">click me</button>
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction remove-style-demo []
-  ["#button17"] (em/remove-style :border))      
+  "#button17" (ef/remove-style :border))      
 </pre>
-<pre>
+<pre class="prettyprint linenums lang-css">
 CSS:
 .highlight {
-border: 2px solid #ff3333;		
+  border: 2px solid #ff3333;		
 }
 </pre>
+      </section>
+      <section id="doc-filter">
+        <div class="page-header">
+          <h3>Transform: <em>filter</em></h3>
+        </div>
 
-<h3 id="doc-filter">Transform: <em>filter</em></h3>
-<p>The <em>filter</em> apply a test function to the node an only if the test
-function returns true<p>  
-<pre>
+      <p>The <em>filter</em> apply a test function to the node an only if the test
+        function returns true<p>  
+<pre class="prettyprint linenums lang-clj">
 (filter test-func transform)
 </pre>
-<p>Example: <button id="button18">check email</button><input id="email-field" type="text" value="invalid-email">
-<p>The following action is triggered when we click the button.</p>
-<pre>
+      <p>Example: <button id="button18">check email</button><input id="email-field" type="text" value="invalid-email">
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction filter-demo []
-  ["#email-field"] (em/filter #(> 0 (. (.-value %) (indexOf "@")))
-  					 (em/set-style :background-color "red"))
-  ["#email-field"] (em/filter #(<= 0 (. (.-value %) (indexOf "@")))
-  					 (em/set-style :background-color "green")))    
+  "#email-field" (ef/filter #(> 0 (. (.-value %) (indexOf "@")))
+                   (ef/set-style :background-color "red"))
+  "#email-field" (ef/filter #(<= 0 (. (.-value %) (indexOf "@")))
+  	           (ef/set-style :background-color "green")))    
 </pre>
+      </section>
+      <section id="doc-focus">
+        <div class="page-header">
+          <h3>Transform: <em>focus & blur</em></h3>
+        </div>
 
-<h3 id="doc-focus">Transforms: <em>focus & blur</em></h3>
-<p>The <em>focus & blur</em> transforms apply set the browser focus to or away from the selected node.<p>  
-<pre>
+      <p>The <em>focus & blur</em> transforms set the browser focus to or away from the selected node.<p>  
+<pre class="prettyprint linenums lang-clj">
 (focus) & (blur)
 </pre>
-<p>Example: <button id="button19">focus</button> <button id="button20">blur</button><input id="focus-field" type="text" value="focus">
-<p>The following action is triggered when we click the buttons.</p>
-<pre>
+      <p>Example: <button id="button19">focus</button> <button id="button20">blur</button><input id="focus-field" type="text" value="focus">
+      <p>The following action is triggered when we click the buttons.</p>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction focus-demo []
-  ["#focus-field"] (em/focus))
+  "#focus-field" (ef/focus))
 (em/defaction blur-demo []
-  ["#focus-field"] (em/blur))
+  "#focus-field" (ef/blur))
 </pre>
+      </section>
+      <section id="doc-rvars">
+        <div class="page-header">
+          <h3>Transform: <em>replace-vars</em></h3>
+        </div>
+
+      <p>The <em>replace-vars</em> transform will replace 
+         any <em>${var}</em> in text and attributes by the 
+         value found in the map.<p>  
+<pre class="prettyprint linenums lang-clj">
+(replace-vars {:key1 "value" :key2 "value"}) 
+</pre>
+      <p>Example: <button id="button21">replace</button> <span id="rvar-example">${name}
+      is running home.</span>
+      <p>The following action is triggered when we click the buttons.</p>
+<pre class="prettyprint linenums lang-clj">
+(em/defaction replace-vars-demo []
+  "#rvar-example" (ef/replace-vars {:name "Kurt"}))
+</pre>
+      </section>
+
+      <section id="doc-set-data">
+        <div class="page-header">
+          <h3>Transform: <em>set-data</em></h3>
+        </div>
+
+      <p>The <em>set-data</em> transform will add a piece of data
+        to an immutable map attached to the dom node or nodes. You 
+        retrieve the data through the extractor get-data.<p>
+<pre class="prettyprint linenums lang-clj">
+(set-data :key "value") 
+</pre> 
+      </section>
+
+    </div>
+  </div>
+</div>

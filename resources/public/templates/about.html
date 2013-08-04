@@ -1,0 +1,74 @@
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>About Enfocus</h1>
+    <!--<p class="lead">.</p>-->
+  </div>
+</header>
+
+
+
+<div class="content-page">
+<p>Enfocus is a dom manipulation library for ClojureScript.  
+Originally inspired by Christophe Grand's clojure based
+Enlive, it has evolved into a cross browser tool for building rich UIs. </p>
+<p>It supports all of the Enlive-based transformations along with many 
+more transformations geared towards managing live dom features, such as
+events and effects.     
+The best way to understand what this library can do is to look at code.  
+The getting started page of this site is controlled by the following code.</p>
+
+<pre class="prettyprint linenums lang-clj">
+(ns enfocus.demo.site
+  (:require [enfocus.core :as ef]
+            [enfocus.effects :as effects]
+            [enfocus.events :as ev])
+  (:require-macros [enfocus.macros :as em]))
+
+(em/deftemplate gstarted "templates/getting-started.html" [])
+
+(defn clone-for-demo []
+  (let [fruit-data {"apple" 5, "pear" 6}]
+    (ef/at "#clone-for-demo tbody > tr:first-child" 
+         (em/clone-for [fr (vec fruit-data)]
+            "*:first-child" (ef/content (first fr))
+            "*:last-child" (ef/content (str (second fr)))))))
+
+(defn read-form-demo []
+  (let [values (ef/from "#read-form-test" (ef/read-form))]
+      (ef/at "#read-form-demo" (ef/content (pr-str values)))))                    
+
+
+(em/defaction gstarted-page []
+  "#content-pane" (ef/do->
+                      (ef/content (gstarted))
+                      (reset-scroll))
+  "#button1" (ev/listen 
+                 :click 
+                 #(ef/at (.-currentTarget %) 
+                         (ef/content "I have been clicked")))
+  "#button2" (ev/listen 
+                 :click 
+                 #(ef/at "#rz-demo" (effects/chain 
+                                      (effects/resize 200 :curheight 500)
+                                      (effects/resize 5 :curheight 500))))
+  "#button3" (ev/listen :click clone-for-demo)
+  "#button4" (ev/listen :click read-form-demo))
+</pre>
+<p>In this small piece of code we can see many of key features of enfocus: content manipulation, style manipulation, 
+remote resources, complex effects, event handling and management of timed or synchronized events.  All this, and we have only seen 35 lines of code!
+
+
+<h4>How can I contribute?</h4>
+<p>You will find instructions for contributing to either the Enfocus main project or the Enfocus demo site project at the following links:</p>
+<ul>
+<li><a href="https://github.com/ckirkendall/enfocus">enfocus main</a></li>
+<li><a href="https://github.com/ckirkendall/enfocus-demo-site">enfocus demo site</a></li>
+
+</ul>
+
+<h4>License</h4>
+
+<p>Copyright (C) 2013 Creighton Kirkendall</p>
+
+<p>Distributed under the Eclipse Public License, the same as Clojure.</p>
+</div>

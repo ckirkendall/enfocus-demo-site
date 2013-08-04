@@ -1,109 +1,146 @@
-<div class="content-page">
-<h1>Effects and Timing</h1>
-<ul class="table-contents">
-<li id="resize-link">resize</li>             
-<li id="move-link">move</li>
-<li id="fade-link">fade-in & fade-out</li>
-<li id="delay-link">delay</li>
-<li id="chain-link">chain</li>
-</ul>
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>Animations and Timing</h1>
+    <!--<p class="lead">.</p>-->
+  </div>
+</header>
 
-<h3 id="doc-resize">Transform: <em>resize</em></h3>
+<div class="content-page">
+  <div class="row">
+    <div class="span3 bs-docs-sidebar">
+      <ul class="table-contents nav nav-list bs-docs-sidenav">
+        <li id="resize-link"><a>resize</a></li>             
+        <li id="move-link"><a>move</a></li>
+        <li id="fade-link"><a>fade-in & fade-out</a></li>
+        <li id="delay-link"><a>delay</a></li>
+        <li id="chain-link"><a>chain</a></li>      
+      </ul>
+    </div>
+
+    <div class="span9">
+      <section id="doc-resize">
+        <div class="page-header">
+          <h3>Transform: <em>resize</em></h3>
+        </div>
+
 <p>The <em>resize</em> effect will change the size of the selected node from its current width and height to
 a new width and height over a time frame and step size.<p> 
 <p>note: :curwidth and :curheight can be used for either width or height to keep the current width or height even
 when the exact value is not known.</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (resize width height)
-or
+;or
 (resize width height total-time)
-or
+;or
 (resize width height total-time (fn callbk [node] ..))
-or
+;or
 (resize width height total-time (fn callbk [node] ..) accelerator)
 </pre>
 <p>Example: <button id="button1">click me</button></p>
 <div id="rz-demo" style="width: 5px; height: 10px; background-color: #33ff33;"> </div>
 <p>The following action is triggered when we click the button</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction resize-demo [] 
-  ["#rz-demo"] (em/resize 200 :curheight 500
-                 (em/resize 5 :curheight 500)))                 
+  "#rz-demo" (em/resize 200 :curheight 500
+               (em/resize 5 :curheight 500)))                 
 </pre>
 <p>Notice in the above example, I am using the callback to call another <em>resize</em> transform.</p>
+      </section>
 
-<h3 id="doc-move">Transform: <em>move</em></h3>
+      <section id="doc-move">
+        <div class="page-header">
+          <h3>Transform: <em>move</em></h3>
+        </div>
 <p>The <em>move</em> effect will change the location of the selected node from its current position to
 a new postion over a time frame and step size.  Currently this effect only supports fixed or absolute
 positioned object.<p> 
 <p>note: :curx and :cury can be used to keep the current x or y even
 when the exact value is not known</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (move x y)
-or
+;or
 (move x y total-time)
-or
+;or
 (move x y total-time (fn callbk [node] ..))
-or
+;or
 (move x y total-time (fn callbk [node] ..) accelerator)
 </pre>
 <p>Example: <button id="button2">click me</button></p>
 <div id="mv-demo" style="position: fixed; top: 50%; left: -20px; width: 20px; height: 20px; background-color: #33ff33;"> </div>
 <p>The following action is triggered when we click the button</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction move-demo [] 
-  ["#mv-demo"] (em/move 300 :cury 500
-                 (em/move -20 :cury 500)))
+  "#mv-demo" (em/move 300 :cury 500
+               (em/move -20 :cury 500)))
                    
 </pre>
 <p>Notice in the above example, I am using the callback to call another <em>move</em> transform.</p>
 
-<h3 id="doc-fade">Transform: <em>fade-in</em> and <em>fade-out</em></h3>
+      </section>
+
+      <section id="doc-fade">
+        <div class="page-header">
+          <h3>Transform: <em>fade-in and fade-out</em></h3>
+        </div>
 <p>The <em>fade</em> effects will change current opacity of the selected nodes from their current
 opacity to 0 and 1, respectively, over a specific time frame and step size.<p>
 <p>Note: There are plans to replace fade-in and fade-out, with a change-opacity effect, so use with caution.</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (fade-in total-time)
-or
+;or
 (fade-in total-time (fn callbk [node] ..))
-or
+;or
 (fade-in total-time (fn callbk [node] ..) accelerator)
 </pre>
 <p>Example: <button id="button3">click me</button></p>
 <div id="fade-demo" style="width: 50px; height: 50px; background-color: #33ff33;"> </div>
 <p>The following action is triggered when we click the button</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction fade-demo [] 
-  ["#fade-demo"] (em/fade-out 500
-                   (em/fade-in 500)))
+  "#fade-demo" (em/fade-out 500
+                 (em/fade-in 500)))
 </pre>
 <p>Notice in the above example, I am using the callback of fade-out to call another <em>fade-in</em> transform.</p>
 
-<h3 id="doc-delay">Transform: <em>delay</em></h3>
+</section>
+
+      <section id="doc-delay">
+        <div class="page-header">
+          <h3>Transform: <em>delay</em></h3>
+        </div>
+
 <p>The <em>delay</em> effects schedule the transform to be performed a certain number of milliseconds in future.<p> 
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (delay time transform)
 </pre>
 <p>Example: <button id="button4">click me</button></p>
 <div id="delay-demo" style="width: 50px; height: 50px; background-color: #33ff33;"> </div>
 <p>The following action is triggered when we click the button</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction delay-demo [] 
-  ["#delay-demo"] (em/do-> (em/resize 200 :curheight 500)
-                           (em/delay 2000 (em/resize 50 :curheight 500))))
+  "#delay-demo" (em/do-> (em/resize 200 :curheight 500)
+                         (em/delay 2000 (em/resize 50 :curheight 500))))
 </pre>
+</section>
 
-<h3 id="doc-chain">Transform: <em>chain</em></h3>
+      <section id="doc-chain">
+        <div class="page-header">
+          <h3>Transform: <em>chain</em></h3>
+        </div>
 <p>The <em>chain</em> effect will take a set of asynchronous effects and <em>chain</em> them together synchronously,
 so one effect will start after the previous effect has finished.<p> 
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (chain (effect ...) (effect ...))
 </pre>
 <p>Example: <button id="button5">click me</button></p>
 <div id="chain-demo" style="width: 50px; height: 50px; background-color: #33ff33;"> </div>
 <p>The following action is triggered when we click the button</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction chain-demo [] 
-  ["#chain-demo"] (em/chain (em/resize 200 :curheight 500)
-                            (em/resize 5 :curheight 500)))
+  "#chain-demo" (em/chain (em/resize 200 :curheight 500)
+                          (em/resize 5 :curheight 500)))
 </pre>
+</section>
+</div>
+</div>
+</div>

@@ -1,28 +1,33 @@
 body {
-background-color: #333;
+--background-color: #333;
 
-font-family: sans-serif;
-color: #33ee33;
+--font-family: sans-serif;
+--color: #33ee33;
+}
+
+.hero-unit {
+background: #fff url(../img/hero-back.jpg);
+margin-top: 10px;
 }
 
 pre {
-background-color: #efefef;
+--background-color: #efefef;
 border: 1px solid #555;
 padding: 10px;
 }
 
 #title {
 width: 200px;
-font-size: 30px;
+font-size: 20px;
 font-weight: bold;
 color: transparent;
-text-shadow: 0 0 3px rgba(51,238,51,0.9);
+text-shadow: 0 0 2px rgba(255,255,255,0.9);
 }
 .head2 {
-color: #33ee33;
+color: #fff;
 }
 
-#band {
+#bandd {
 position: fixed;
 top: 50%;
 background: #333 url(/img/sub-content.png);
@@ -34,59 +39,10 @@ margin-left: -10px;
 width: 100%
 }
 
-#circle {
-background: #333 url(/img/sub-content.png);
-position: relative;
-top: 50%;
-left: 50%;
-margin-left: -100px;
-margin-top: -100px;
-width: 200px;
-height: 200px;
-border: 1px #999 solid;
--moz-border-radius: 100px;
-border-radius: 100px;
-}
-
-#inner-circle {
-cursor: pointer;
-position: relative;
-top: 50%;
-left: 50%;
-margin-left: -76px;
-margin-top: -76px;
-width: 150px;
-height: 150px;
-background-color: #fff;
-border: 1px #999 solid;
--moz-border-radius: 75px;
-border-radius: 75px;
-}
-
-#start{
-color: #333;
-position: relative;
-top: 50%;
-left: 50%;
-margin-left: -78px;
-margin-top: -25px;
-width: 150px;
-height: 60px;
-text-align: center;
-font-size: 40px;
-font-weight: bold;
-}
 
 #content-pane {
 background-color: #fff;
-width: 5px;
-height: 0px;
-position: fixed;
-top: 50px;
-left: 20px;
--moz-border-radius: 10px;
-border-radius: 10px;
-overflow: auto
+--margin-top: 10px;
 }
 
 .content-page {

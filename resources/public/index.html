@@ -2,42 +2,85 @@
 <html>
 <head>
 <meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type">
-<title>enfocus demo</title>
-<script src="./cljs/bootstrap.js"></script>
-<link type="text/css" rel="stylesheet" media="all"
-	href="./css/sample.css">
+<title>Enfocus2 Documentation</title>
+<script src="./js/bootstrap.js"></script>
+<!--script src="./js/prettify.js"></script-->
+<script src="./js/prettify.js"></script>
+<script src="./js/lang-clj.js"></script>
+
+<link type="text/css" rel="stylesheet" media="all" href="./css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet" media="all" href="./css/sample.css">
+<link type="text/css" rel="stylesheet" media="all" href="./css/docs.css">
+<link type="text/css" rel="stylesheet" media="all" href="./css/prettify.css">
 </head>
-<body>
-	<div id="heading">
-		<div id="title">
-			[:en<span class="head2">focus</span>]
-		</div>
+
+<body data-spy="scroll" data-target=".bs-docs-sidebar">
+
+    <!-- Navbar
+    ================================================== -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="./index.html">	<span id="title">[:en<span class="head2">focus</span>2]</span></a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li id="about-button"><a>About</a></li>
+              <li class="quick-start"><a>Quick Start</a></li>
+	      <li id="doc-trans"><a>Transforms</a></li>
+	      <li id="doc-events"><a>Event Handling</a></li>
+	      <li id="doc-effects"><a>Animations</a></li>
+	      <li id="doc-remote"><a>Templates/Snippets</a></li>
+	      <li id="doc-extract"><a>Extractors</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div id="content-pane">
+
+    <div class="container">
+
+      <div class="hero-unit">
+        <h1>Enfocus2</h1>
+        <p class="lead">A platform for building rich UIs in ClojureScript. </p>
+        <p>
+          <a href="#" class="btn btn-primary btn-large
+          quick-start">Quick Start</a>
+        </p>
+<br><br>
+            <p>
+          <a href="https://groups.google.com/d/forum/enfocus"
+          class="btn btn-info btn-mini" target="_blank">User Group</a>
+</p><p>
+<iframe class="github-btn"
+            src="http://ghbtns.com/github-btn.html?user=ckirkendall&amp;repo=enfocus&amp;type=watch&amp;count=true"
+            allowtransparency="true" frameborder="0" scrolling="0"
+            width="100px" height="20px"></iframe>
+        <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=ckirkendall&amp;repo=enfocus&amp;type=fork&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="102px" height="20px"></iframe>
+            Version 2.0.0-SNAPSHOT
+</p>
+      </div>
+
+    </div>
+
 	</div>
-	<div id="band">
-		<div id="circle">
-			<div id="inner-circle">
-				<div id="start">Start</div>
-			</div>
-		</div>
-	</div>
-	<div id="content-pane"></div>
-	<div id="menu">
-		<ul class="menu-holder">
-		   <li id="home-button" class="marea">
-				<h3>Home</h3></li>
-			<li id="gstarted-button" class="marea">
-				<h3>Quick Start</h3></li>
-			<li class="marea">
-				<h3 id="tutorial-button">Documentation/Demos</h3>
-				<ul class="sub">
-					<li class="mitem" id="doc-trans">Standard Transforms</li>
-					<li class="mitem" id="doc-events">Handling Events</li>
-					<li class="mitem" id="doc-effects">Effects and Timing</li>
-					<li class="mitem" id="doc-remote">Remote Templates/Snippets</li>
-					<li class="mitem" id="doc-extract">Getting Data <em>from</em> the DOM</li>
-				</ul></li>
-			
-		</ul>
-	</div>
+
+<footer class="footer">
+      <div class="container">
+        <p>Designed and built by <a href="http://twitter.com/crkirkendall" target="_blank">@crkirkendall</a>.</p>
+        <p>Code licensed
+        under <a href="http://www.eclipse.org/legal/epl-v10.html"
+        target="_blank">Eclipse Public License v1.0</a></p>
+        <ul class="footer-links">
+          <li><a href="https://github.com/ckirkendall/enfocus/issues?state=open">Issues</a></li>
+        </ul>
+      </div>
+    </footer>
 </body>
 </html>

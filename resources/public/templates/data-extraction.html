@@ -1,47 +1,103 @@
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>Extractors</h1>
+    <p class="lead">Getting data <em>from</em> the dom.</p>
+  </div>
+</header>
+
 <div class="content-page">
-<h1>Extracting Data <em>From</em> the Dom</h1>
+  <div class="row">
+    <div class="span3 bs-docs-sidebar">
+      <ul class="table-contents nav nav-list bs-docs-sidenav">
+        <li id="from-link"><a>The <em>from</em> form</a></li>
+        <li id="read-form-link"><a>read-form</a></li>
+        <li id="get-prop-link"><a>get-prop</a></li>
+        <li id="get-attr-link"><a>get-attr</a></li>
+        <li id="get-text-link"><a>get-text</a></li>      
+      </ul>
+    </div>
 
-<ul class="table-contents">
-<li id="from-link">The <em>from</em> form</li>
-<li id="get-prop-link">get-prop</li>
-<li id="get-attr-link">get-attr</li>
-<li id="get-text-link">get-text</li>             
-</ul>
+    <div class="span9">
+      <section id="doc-from">
+        <div class="page-header">
+          <h3>The <em>from</em> Form</h3>
+        </div>
 
-<h3 id="doc-from">The <em>from</em> Form</h3>
 <p>To get data from the dom we use the <em>from</em> form. It comes in two basic forms listed below:</p>
-<pre>
-(from a-node (extractor arg1 ...))
--> returns a list or single value
-and
+<p>Single Extraction</p>
+<pre class="prettyprint linenums lang-clj">
+(from a-node (extractor arg1 ...)) ;returns a list or single value
 
+;or implied js/document as root node
+
+(from selector (extractor arg1 ...)) 
+</pre>
+<p>Multiple Extractions</p>
+<pre class="prettyprint linenums lang-clj">
 (from a-node
     :key1 [selector1] (extractor arg1 ...)
+    :key2 [selector2] (extractor arg1 ...)) 
+;returns a map {:key1 value|list :key2 value|list
+
+;or implied js/document as root node
+
+(from 
+    :key1 [selector1] (extractor arg1 ...)
     :key2 [selector2] (extractor arg1 ...))
--> returns a map {:key1 value|list :key2 value|list
 </pre>
-<p>In the first case, <em>from</em> is passed a node or node set and a extractor.  It then calls the 
+<p>In the first case, <em>from</em> is passed a node/node set or selector and a extractor.  It then calls the 
 extractor on each element in the node set. It will return either a single value if a single node is passed in and
 a collection of values if more than one node is passed in.<p>
 <p>An <em>extractor</em> is nothing more than a function that takes a set of arguments and returns a function 
 that takes a set of nodes.</p>
-<p>In the second case, we see <em>from</em> is passed a node or node set and a set of 
+<p>In the second case, we see <em>from</em> is optionally passed a node or node set and a set of 
 key/selector/extractor trio. The selectors are scoped by the node or node set passed in and 
 the results of each selector is passed on to its partner extractor and the result is stored in the
 return map under the given key.</p> 
-<p>A <em>selector</em> is a string representing a <a href="http://www.w3schools.com/cssref/css_selectors.asp">CSS3 compliant selector</a>. 
 
+</section>
+      <section id="doc-read-form">
+        <div class="page-header">
+          <h3>Extractor: <em>read-form</em></h3>
+        </div>
 
+<p>The <em>read-form</em> extractor returns a the content of form as a
+  clojure map. If
+more than one node is passed in it will return a list of values.<p>  
+<pre class="prettyprint linenums lang-clj">
+(read-form)
+</pre>
+<div>
+<form id="read-form-test" name="read-form-test">
+<input type="text" name="field1" id="field1" value="type here"><br>
+<input type="text" name="field2" id="field2" value="type here2"><br>
+<input name="field3" type="checkbox" value="one">one<br>
+<input name="field3" type="checkbox" value="two">two<br>
+<input name="field3" type="checkbox" value="three">three<br>
+</form>
+</div>
+<p>Example: <button id="button4">click me</button></p>
+<div id="read-form-demo"> </div>
+<p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
+(defn read-form-demo []
+  (let [values (ef/from "#read-form-test" (ef/read-form))]
+      (ef/at "#read-form-demo" (ef/content (pr-str values)))))                    
+</pre>
+</section>
+      <section id="doc-get-prop">
+        <div class="page-header">
+          <h3>Extractor: <em>get-prop</em></h3>
+        </div>
 
-<h3 id="doc-get-prop">Extractor: <em>get-prop</em></h3>
 <p>The <em>get-prop</em> extractor returns the specified property of the selected nodes. If
 more than one node is passed in it will return a list of values.<p>  
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (get-prop :prop)
 </pre>
 <div>
-<input id="get-prop-field1" value="type here"><br>
-<input id="get-prop-field2" value="type here"><br>
+<input type="text" id="get-prop-field1" value="type here"><br>
+<input type="text" id="get-prop-field2" value="type here"><br>
 <input name="get-prop-field3" type="checkbox" value="one">one<br>
 <input name="get-prop-field3" type="checkbox" value="two">two<br>
 <input name="get-prop-field3" type="checkbox" value="three">three<br>
@@ -49,22 +105,24 @@ more than one node is passed in it will return a list of values.<p>
 <p>Example: <button id="button1">click me</button></p>
 <div id="get-prop-demo"> </div>
 <p>The following action is triggered when we click the button.</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (defn get-prop-demo []
-  (let [values (em/from js/document
+  (let [values (ef/from js/document
                  :field1 ["#get-prop-field1"] (em/get-prop :value)
                  :field2 ["#get-prop-field2"] (em/get-prop :value)
                  :field3 ["input[name='get-prop-field3']"] (em/filter #(.-checked %)
                                                                    (em/get-prop :value)))]
-      (em/at js/document
-        ["#get-prop-demo"] (em/content (pr-str values)))))                    
+      (ef/at "#get-prop-demo" (em/content (pr-str values)))))                    
 </pre>
+</section>
+      <section id="doc-get-attr">
+        <div class="page-header">
+          <h3>Extractor: <em>get-attr</em></h3>
+        </div>
 
-
-<h3 id="doc-get-attr">Extractor: <em>get-attr</em></h3>
 <p>The <em>get-attr</em> extractor returns the value or values of the selected nodes. If
 more than one node is passed in it will return a list of values.<p>  
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (get-attr :attr)
 </pre>
 <div>
@@ -73,26 +131,33 @@ more than one node is passed in it will return a list of values.<p>
 <p>Example: <button id="button2">get img src</button></p>
 <div id="get-attr-demo"> </div>
 <p>The following action is triggered when we click the button.</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (defn get-attr-demo []
-  (let [value (em/from (em/select ["#get-attr-img"]) (em/get-attr :src))]
-      (em/at js/document
-        ["#get-attr-demo"] (em/content (pr-str value)))))                    
+  (let [value (ef/from "#get-attr-img" (em/get-attr :src))]
+      (ef/at "#get-attr-demo" (em/content (pr-str value)))))                    
 </pre>
+</section>
+      <section id="doc-get-text">
+        <div class="page-header">
+          <h3>Extractor: <em>get-text</em></h3>
+        </div>
 
-<h3 id="doc-get-text">Extractor: <em>get-text</em></h3>
+
 <p>The <em>get-text</em> extractor returns the text value or values of the selected nodes. If
 more than one node is passed in it will return a list of values.<p>  
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (get-text)
 </pre>
 <div>
 <p>Example: <button id="button3">click me</button></p>
 <div id="get-text-demo"> </div>
 <p>The following action is triggered when we click the button.</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (defn get-text-demo []
-  (let [txt (em/from (em/select ["#button3"]) (em/get-text))]
-    (em/at js/document 
-      ["#get-text-demo"] (em/content txt))))  
+  (let [txt (em/from "#button3" (em/get-text))]
+    (em/at "#get-text-demo" (em/content txt))))  
 </pre>
+</section>
+</div>
+</div>
+</div>

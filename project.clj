@@ -1,12 +1,17 @@
-(defproject enfocus.demo "1.0.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :dependencies [[org.clojure/clojure "1.4.0"]
-                 [ring "1.0.1"]
-                 [enfocus "1.0.0-RC1"]]
-  :dev-dependencies [[lein-cljsbuild "0.2.10"]]
-    :cljsbuild {
-      :builds [{
-         :source-path "src"
-                :compiler {:output-to "resources/public/cljs/bootstrap.js"
-                           :optimizations :advanced 
-                           :pretty-print false}}]})
+(defproject enfocus-demp "2.0.0-SNAPSHOT"
+  :description "enfocus documentation site"
+  :url "http://ckirkendall.github.io/enfocus-site"
+  :dependencies [[org.clojure/clojure "1.5.1"]
+                 [enfocus "2.0.0-SNAPSHOT"]
+                 [ring/ring-core "1.1.8"]
+                 [ring/ring-jetty-adapter "1.1.8"]]
+  :plugins [[lein-cljsbuild "0.3.2"]
+            [lein-ring "0.8.3"]]
+  :cljsbuild {:builds {:prod {:source-paths ["src"],
+                              :compiler {:output-to "resources/public/js/bootstrap.js"
+                                         :optimizations :advanced
+                                         :pretty-print false}}
+                       :dev  {:source-paths ["src"],
+                              :compiler {:output-to "resources/public/js/bootstrap.js"
+                                         :optimizations :simple
+                                         :pretty-print true}}}})

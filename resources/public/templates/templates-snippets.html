@@ -1,77 +1,146 @@
-<div class="content-page">
-<h1>Templates and Snippets</h1>
-<ul class="table-contents">
-<li id="template-link">deftemplate</li>             
-<li id="snippet-link">defsnippet</li>
-<li id="load-link">wait-for-load</li>
-</ul>
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>Templates & Snippets</h1>
+    <!--<p class="lead">.</p>-->
+  </div>
+</header>
 
-<h3 id="doc-template">deftemplate</h3>
-<p>The deftemplate construct defines a function that performs a set of transforms on a remote resource and returns the
+<div class="content-page">
+  <div class="row">
+    <div class="span3 bs-docs-sidebar">
+      <ul class="table-contents nav nav-list bs-docs-sidenav">
+        <li id="template-link"><a>deftemplate</a></li>             
+        <li id="snippet-link"><a>defsnippet</a></li>
+        <li id="hiccup-link"><a>Hiccup Style Templates</a></li>
+        <li id="load-link"><a>wait-for-load</a></li>      
+      </ul>
+    </div>
+
+    <div class="span9">
+      <section id="doc-template">
+        <div class="page-header">
+          <h3><em>deftemplate</em></h3>
+        </div>
+
+<p>The deftemplate construct defines a function that performs a set of
+  transforms on a remote or compiled resource and returns the
 resulting dom objects as a dom fragment. This allows the developer to bring in external html files, 
 possibly developed by a designer, and work with them unaltered.<p> 
-<p>note: Remote resources are pulled down and cached on the client as dom fragments.</p>
-<pre>
+<p>note: Remote resources are pulled down through ajax and cached on the client as
+  dom fragments. Compiled resources are bundled with the exported javascript.</p>
+<pre class="prettyprint linenums lang-clj">
+;remote
 (deftamplate my-template resource-uri [arg1 arg2 ...] 
-  [selector1] (transform arg1)
-  [selector2] (transform arg2))
+  selector1 (transform arg1)
+  selector2 (transform arg2))
+
+;compiled - recommended
+(deftamplate my-template :compiled resource-uri [arg1 arg2 ...] 
+  selector1 (transform arg1)
+  selector2 (transform arg2))
+
 </pre>
 <p>Example: <button id="button1">click me</button> <a href="templates/template-demo.html">view remote resource</a></p>
 <div id="template-demo">table will appear here</div>
 <p>The following action is triggered when we click the button</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (em/deftemplate template-demo "/templates/template-demo.html" [fruit-data] 
-                ["#heading1"] (em/content "fruit")  
-                ["thead tr > *:last-child"] (em/content "quantity")
-                ["tbody > tr:not(:first-child)"] (em/remove-node)
-                ["tbody > tr:first-child"] (em/clone-for [fr (vec fruit-data)]
-                                              ["*:first-child"] (em/content (first fr))
-                                              ["*:last-child"] (em/content (str (second fr)))))
+   "#heading1" (em/content "fruit")  
+   "thead tr > *:last-child" (em/content "quantity")
+   "tbody > tr:not(:first-child)" (em/remove-node)
+   "tbody > tr:first-child" (em/clone-for [fr (vec fruit-data)]
+                               "*:first-child" (em/content (first fr))
+                               "*:last-child" (em/content (str (second fr)))))
 
-(em/at js/document
-  ["#button1"] (em/listen :click #(em/at js/document 
-                                    ["#template-demo"] (em/content (template-demo)))))             
+(em/at "#button1" (em/listen :click 
+                    #(em/at "#template-demo" (em/content (template-demo)))))             
 </pre>
 The code above pulls back template-demo.html, replaces the heading with "fruit" and "quantity", deletes all but the 
 first row of the table and finally uses clone-for to duplicate the first row and build the table. 
+      </section>
+      <section id="doc-snippet">
+        <div class="page-header">
+          <h3><em>defsnippet</em></h3>
+        </div>
 
-<h3 id="doc-snippet">defsnippet</h3>
-<p>defsnippet defines a function that performs a set of transforms on a subsection of a remote resource 
+<p>defsnippet defines a function that performs a set of transforms on
+  a subsection of a remote or compiled resource 
 and returns the resulting dom objects as a dom fragment. This allows the developer to bring in external html files
 and use pieces to build the final view.<p> 
-<p>note: Remote resources are pulled down and cached on the client as dom fragments.</p>
-<pre>[arg1 arg2 ...]
+<p>note: Remote resources are pulled down and cached on the client as
+  dom fragments. Compiled resources are bundled with the exported javascript.</p>
+<pre class="prettyprint linenums lang-clj">
+;remote
 (defsnippet my-snippet resource-uri [selector] [arg1 arg2 ...]
-  [selector1] (transform arg1)
-  [selector2] (transform arg2))
+  selector1 (transform arg1)
+  selector2 (transform arg2))
+
+;compiled
+(defsnippet my-snippet :compiled resource-uri [selector] [arg1 arg2 ...]
+  selector1 (transform arg1)
+  selector2 (transform arg2))
+
 </pre>
 <p>Example: <button id="button2">click me</button> <a href="templates/template-demo.html">view remote resource</a></p>
 <div id="snippet-demo">table will appear here</div>
 <p>The following action is triggered when we click the button</p>
-<pre>
-(em/defsnippet snippet2 "templates/template-demo.html" ["tbody > *:first-child"] 
-               [fruit quantity] 
-               ["tr > *:first-child"] (em/content fruit)
-               ["tr > *:last-child"] (em/content (str quantity)))
+<pre class="prettyprint linenums lang-clj">
+(em/defsnippet snippet2 "templates/template-demo.html" "tbody > *:first-child" 
+  [fruit quantity] 
+  "tr > *:first-child" (em/content fruit)
+  "tr > *:last-child" (em/content (str quantity)))
   
 (em/deftemplate template-demo2 "/templates/template-demo.html" [fruit-data] 
-                ["#heading1"] (em/content "fruit")  
-                ["thead tr > *:last-child"] (em/content "quantity")
-                ["tbody"] (em/content
-                           (map #(snippet2 % (fruit-data %)) (keys fruit-data)))) 
+  "#heading1" (em/content "fruit")  
+  "thead tr > *:last-child" (em/content "quantity")
+  "tbody" (em/content
+            (map #(snippet2 % (fruit-data %)) (keys fruit-data)))) 
                            
-(em/at js/document
-  ["#button2"] (em/listen :click #(em/at js/document 
-                                    ["#snippet-demo"] (em/content (template-demo2)))))              
+(em/at "#button2" (em/listen :click 
+                    #(em/at "#snippet-demo" (em/content (template-demo2)))))              
 </pre>
 <p>The code above pull back template-demo.html, replaces the heading with "fruit" and "quantity", and
 finally iterates over the fruit data and calls our snippet to build the rows of the table. </p>
+  </section>
+      <section id="doc-hiccup">
+        <div class="page-header">
+          <h3>Hiccup Style Templates</h3>
+        </div>
 
-<h3 id="doc-load">wait-for-load</h3>
+<p>This type of template allows you to construct an html dom fragment by passing in a
+  clojure data structure representing the html elements.</p>
+<pre class="prettyprint linenums lang-clj">
+(html [:tag1#id1  [:tag2.class2 {:atr1 "v1" :art2 "v2"}]])
+</pre>
+
+<p>Example: <button id="button3">click me</button></p>
+<div>Input box will appear here.</div>
+<table id="hic-demo" class="table"><tbody></tbody></table>
+<p>The following action is triggered when we click the button</p>
+<pre class="prettyprint linenums lang-clj">
+(defn my-hic-template [val]
+  (ef/html [:tr '([:td "hiccup"] [:td "test"])] {:name "form1"}))
+
+(em/defaction hiccup-demo []
+  "#hic-demo tbody" (ef/append (my-hic-template "testing")))
+</pre> 
+      </section>
+
+
+
+      <section id="doc-load">
+        <div class="page-header">
+          <h3><em>wait-for-load</em></h3>
+        </div>
+
 <p>Due to the asynchronous nature of pulling in remote resources this helper function is needed. It takes
 an function and calls the function once all templates have been loaded.
 </p> 
 <p>note: Remote resources are pulled down and cached on the client as dom fragments.</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (wait-for-load (fn []...))
 </pre>
+</section>
+</div>
+</div>
+</div>

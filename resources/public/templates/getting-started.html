@@ -1,55 +1,103 @@
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>Quick Start</h1>
+    <!--<p class="lead">.</p>-->
+  </div>
+</header>
+
+
+
 <div class="content-page">
-<h1>Quick Start</h1>
-<h3>Setup</h3>
+
+<h3>Starting a new Project</h3>
+<p>The quickest way to get up and running is to use the
+  enfocus-template.  This is a Leiningen template that creates a sample
+  app for using enfocus and ring.</p>
+
+<p>Creating your application:</p>
+
+<pre class="prettyprint linenums">
+lein new enfocus-template my-app
+</pre>
+
+<p>Launching your applications:</p>
+
+<pre class="prettyprint linenums">
+cd my-app
+lein cljsbuild once
+lein ring server
+</pre>
+<p>This should launch the app into a browser.</p>
+
+
+<h3>Adding Enfocus to an Existing Project</h3>
+
 From any leiningen project file:
-<pre>
-[enfocus "1.0.1"]
+
+<pre class="prettyprint linenums lang-clj">
+[enfocus "2.0.0-SNAPSHOT"]
 </pre>
 
 <p>For the best development experience, use lein-cljsbuild. </p>
 
 <h3>The Basics</h3>
 Every great journey starts with "Hello world!"
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (ns my.namespace
   (:require [enfocus.core :as ef])
   (:require-macros [enfocus.macros :as em]))
 
 (defn start [] 
-  (em/at js/document
-    ["body"] (em/content "Hello world!"))
+  (ef/at "body" (ef/content "Hello world!"))
 
 (set! (.-onload js/window) start)         
 </pre>
 <h3>The <u>at</u> Form</h3>
 <p>At the core to understanding Enfocus is the <em>at</em> form used in the 
-"Hello world!" example above.  It comes in two basic flavors listed below:</p>
-<pre>
+"Hello world!" example above.  It comes in two basic flavors listed
+  below:</p>
+<p>Single Transform</p>
+<pre class="prettyprint linenums lang-clj">
 (at a-node (transform arg1 ...))
 
-and
+;or implied js/document as main node
 
-(at a-node
-    [selector1] (transform1 arg1 ...)
-    [selector2] (transform2 arg1 ...))
+(at "selector" (transfrom arg1 ...))
 </pre>
-<p>In the first case, <em>at</em> is passed a node or a node set and a transform.  This form of <em>at</em>
-calls the transform on each element in the node set. <p>
-<p>A <em>transform</em> is nothing more than a function that takes a set of arguments and returns a function 
-that takes a set of nodes.  In case of the "Hello World!" example above, we see the use of
-(em/content "Hello world!"). This call returns a function that takes node or node set
-and replaces the content with "Hello world!"</p>
-<p>In the second case, we see <em>at</em> is passed a node or node set and a set of 
-selector/transform pairs. The selectors are scoped by the node or node set passed in and 
-the results of each selector is passed on to its partner transformation.</p> 
-<p>A <em>selector</em> is a string representing a <a href="http://www.w3schools.com/cssref/css_selectors.asp">CSS3 compliant selector</a>. 
+
+<p>Multiple Transforms</p>
+
+<pre class="prettyprint linenums lang-clj">
+(at a-node
+    "selector1" (transform1 arg1 ...)
+    "selector2" (transform2 arg1 ...))
+
+;or implied js/document as main node
+
+(at "selector1" (transform1 arg1 ...)
+    "selector2" (transform2 arg1 ...))
+</pre>
+ <p>In the first case, <em>at</em> is passed a node/node set or a
+          selector, and a transform and calls the transform on each element in the node set.  
+          If a selector is passed the root node is defaulted to js/document. <p>
+        <p>A <em>transform</em> is nothing more than a function that takes a set of arguments and returns a function 
+          that takes a node. In case of the "Hello World!" example
+          above, we see the use of (ef/content "Hello world!"). This
+          call returns a function that takes node or node set and
+          replaces the content with "Hello world!"</p>
+        <p>In the second case, we see <em>at</em> is optionally passed a
+          node or node set followed by selector/transform pairs.  
+          The selectors are scoped by the node or node set, if
+          provided or js/document otherwise, and the results of each
+          selector is passed on to its partner transformation.</p> 
+        <p>A <em>selector</em> is a string representing a <a href="http://www.w3schools.coef/cssref/css_selectors.asp">CSS3 compliant selector</a>. 
 
 <h3>Handling Events</h3>
 <p>Lets look at handling events. When we click the button it will change to 
 say "I have been clicked."</p>
 <button id="button1">click me</button>
 <p>HTML:</p>
-<pre>
+<pre class="prettyprint linenums lang-html">
 &lt;html&gt;
   &lt;body&gt;
     &lt;button id="button1"&gt;click me&lt;/button&gt;
@@ -57,12 +105,12 @@ say "I have been clicked."</p>
 &lt;/html&gt;
 </pre>
 CLJS:
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction change [msg] 
-  ["#button1"] (em/content msg))
+  "#button1" (ef/content msg))
 
 (em/defaction setup []
-  ["#button1"] (em/listen :click #(change "I have been clicked")))
+  "#button1" (ef/listen :click #(change "I have been clicked")))
 	
 (set! (.-onload js/window) setup)         
 </pre>
@@ -77,7 +125,7 @@ effects can be chained.</p>
 <div id="rz-demo" style="width: 5px; height: 10px; background-color: #33ff33;"> </div>
 <button id="button2">click me</button>
 <p>HTML:</p>
-<pre>
+<pre class="prettyprint linenums lang-html">
 &lt;html&gt;
   &lt;body&gt;
     &lt;div id="rz-demo" style="width: 5px; height: 10px; background-color: #33ff33;"&gt; &lt;/div&gt;
@@ -86,21 +134,21 @@ effects can be chained.</p>
 &lt;/html&gt;
 </pre>
 <p>CLJS:</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (em/defaction resize-div [width] 
-  ["#rz-demo"] (em/chain 
-                 (em/resize width :curheight 500)
-                 (em/resize 5 :curheight 500)))
+  ["#rz-demo"] (ef/chain 
+                 (ef/resize width :curheight 500)
+                 (ef/resize 5 :curheight 500)))
 
 (em/defaction setup []
-  ["#button2"] (em/listen #(resize-div 200)))
+  ["#button2"] (ef/listen #(resize-div 200)))
 	
 (set! (.-onload js/window) setup)         
 </pre>
 
 <h3>A bit more complicated example with clone-for</h3>
 <p>Example: <button id="button3">click me</button> </p>
-<table id="clone-for-demo" border="1">
+<table id="clone-for-demo" class="table table-striped"  >
 <thead>
 <tr><th>fruit</th><th>quantity</th></tr>
 </thead>
@@ -109,36 +157,32 @@ effects can be chained.</p>
 </tbody>
 </table>
 <p>The following action is triggered when we click the button.</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (defn clone-for-demo []
   (let [fruit-data {"apple" 5, "pear" 6}]
-    (em/at js/document
-       ["#clone-for-demo tbody > tr:first-child"] 
-         (em/clone-for [fr (vec fruit-data)]
-            ["*:first-child"] (em/content (first fr))
-            ["*:last-child"] (em/content (str (second fr)))))))
+    (ef/at "#clone-for-demo tbody > tr:first-child" 
+      (ef/clone-for [fr (vec fruit-data)]
+        "*:first-child" (ef/content (first fr))
+        "*:last-child" (ef/content (str (second fr)))))))
 </pre>
 
 <h3>Getting Data <em>from</em> the DOM</h3>
-<p>Below is an example of using the <em>from</em> form with the get-prop extractor and some filtering to
-get data out of a form.</p>
+<p>Below is an example of using the <em>from</em> form with the read-form extractor.</p>
 <div>
-<input id="get-prop-field1" value="type here"><br>
-<input id="get-prop-field2" value="type here"><br>
-<input name="get-prop-field3" type="checkbox" value="one">one<br>
-<input name="get-prop-field3" type="checkbox" value="two">two<br>
-<input name="get-prop-field3" type="checkbox" value="three">three<br>
+
+<form id="read-form-test" name="read-form-test">
+<input type="text" name="field1" id="field1" value="type here"><br>
+<input type="text" name="field2" id="field2" value="type here2"><br>
+<input name="field3" type="checkbox" value="one">one<br>
+<input name="field3" type="checkbox" value="two">two<br>
+<input name="field3" type="checkbox" value="three">three<br>
+</form>
 </div>
 <p>Example: <button id="button4">click me</button></p>
-<div id="get-prop-demo"> </div>
+<div id="read-form-demo"> </div>
 <p>The following action is triggered when we click the button.</p>
-<pre>
+<pre class="prettyprint linenums lang-clj">
 (defn get-prop-demo []
-  (let [values (em/from js/document
-                 :field1 ["#get-prop-field1"] (em/get-prop :value)
-                 :field2 ["#get-prop-field2"] (em/get-prop :value)
-                 :field3 ["input[name='get-prop-field3']"] (em/filter #(.-checked %)
-                                                                   (em/get-prop :value)))]
-      (em/at js/document
-        ["#get-prop-demo"] (em/content (pr-str values)))))                   
+  (let [values (ef/from "#read-form-test" (ef/read-form))]
+    (ef/at "#read-form-demo" (ef/content (pr-str values)))))                   
 </pre>
