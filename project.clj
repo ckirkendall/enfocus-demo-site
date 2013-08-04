@@ -10,6 +10,7 @@
   :cljsbuild {:builds {:prod {:source-paths ["src"],
                               :compiler {:output-to "resources/public/js/bootstrap.js"
                                          :optimizations :advanced
+                                         :externs ["resources/public/js/prettify.js" "resources/public/js/lang-clj.js"]
                                          :pretty-print false}}
                        :dev  {:source-paths ["src"],
                               :compiler {:output-to "resources/public/js/bootstrap.js"

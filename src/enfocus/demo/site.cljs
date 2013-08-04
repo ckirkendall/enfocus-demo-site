@@ -38,7 +38,7 @@
   "#doc-effects"  (ev/listen :click (navigate doc-effects-page))
   "#doc-remote"   (ev/listen :click (navigate doc-template-page))
   "#doc-extract"  (ev/listen :click (navigate doc-from-page)))
-
+ 
 
 (set! (.-onload js/window) setup-menu)
 
@@ -72,8 +72,8 @@
   "#button2" (ev/listen 
                  :click 
                  #(ef/at "#rz-demo" (effects/chain 
-                                     (effects/resize 200 :curheight 500)
-                                     (effects/resize 5 :curheight 500))))
+                                      (effects/resize 200 :curheight 500)
+                                      (effects/resize 5 :curheight 500))))
   "#button3" (ev/listen :click clone-for-demo)
   "#button4" (ev/listen :click read-form-demo))
 
@@ -153,7 +153,7 @@
   "#focus-field" (ef/blur))
 
 (em/defaction replace-vars-demo []
-  "#rvar-example" (ef/replace-vars {:name "Kurt"}))
+  "#rvar-example" (ef/replace-vars {:name "Kurt" :location "home"}))
 
 
 (em/defaction doc-trans-page [] 

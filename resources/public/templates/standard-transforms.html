@@ -501,11 +501,11 @@ CSS:
 (replace-vars {:key1 "value" :key2 "value"}) 
 </pre>
       <p>Example: <button id="button21">replace</button> <span id="rvar-example">${name}
-      is running home.</span>
+      is running ${location}.</span>
       <p>The following action is triggered when we click the buttons.</p>
 <pre class="prettyprint linenums lang-clj">
 (em/defaction replace-vars-demo []
-  "#rvar-example" (ef/replace-vars {:name "Kurt"}))
+  "#rvar-example" (ef/replace-vars {:name "Kurt" :location "home"}))
 </pre>
       </section>
 
