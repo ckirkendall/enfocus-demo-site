@@ -15,7 +15,9 @@
          get-attr-demo
          get-prop-demo
          doc-template-page
-         doc-from-page)
+         doc-from-page
+         whats-new-page
+         read-form-demo)
 
 (defn scroll-to []
   (fn [nod]
@@ -37,7 +39,8 @@
   "#doc-events"   (ev/listen :click (navigate doc-events-page)) 
   "#doc-effects"  (ev/listen :click (navigate doc-effects-page))
   "#doc-remote"   (ev/listen :click (navigate doc-template-page))
-  "#doc-extract"  (ev/listen :click (navigate doc-from-page)))
+  "#doc-extract"  (ev/listen :click (navigate doc-from-page))
+  "#whats-new-btn"(ev/listen :click (navigate whats-new-page)))
  
 
 (set! (.-onload js/window) setup-menu)
@@ -53,6 +56,19 @@
   "#content-pane" (ef/do->
                       (ef/content (about))
                       (reset-scroll)))
+
+
+;#######################################
+; what's new page actions
+;#######################################
+
+(em/deftemplate whats-new "templates/whats-new.html" [])
+
+(em/defaction whats-new-page []
+  "#content-pane" (ef/do->
+                      (ef/content (whats-new))
+                      (reset-scroll)))
+
 
 
 ;#######################################
@@ -154,7 +170,6 @@
 
 (em/defaction replace-vars-demo []
   "#rvar-example" (ef/replace-vars {:name "Kurt" :location "home"}))
-
 
 (em/defaction doc-trans-page [] 
   "#content-pane" (ef/do->
