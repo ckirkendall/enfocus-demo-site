@@ -6,6 +6,7 @@
 </header>
 
 <div class="content-page">
+
   <div class="row">
     <div class="span3 bs-docs-sidebar">
       <ul class="table-contents nav nav-list bs-docs-sidenav">
@@ -23,6 +24,7 @@
         <li id="after-link"><a>after</a></li>
         <li id="before-link"><a>before</a></li>
         <li id="substitute-link"><a>substitute</a></li>
+        <li id="remove-node-link"><a>remove-node</a></li>
         <li id="clone-for-link"><a>clone-for</a></li>
         <li id="wrap-link"><a>wrap</a></li>
         <li id="unwrap-link"><a>unwrap</a></li>
@@ -160,7 +162,7 @@ button[foo=bar] {
       </section>
       <section id="doc-remove-attr">
         <div class="page-header">
-          <h3>Transform: <em>set-remove</em></h3>
+          <h3>Transform: <em>remove-attr</em></h3>
         </div>
 
       <p>The <em>remove-attr</em> transform will remove a set of attributes from the nodes returned by a selector.<p>  
@@ -207,7 +209,6 @@ CSS:
           <h3>Transform: <em>remove-class</em></h3>
         </div>
 
-      <h3 id="doc-remove-class">Transform: <em>remove-class</em></h3>
       <p>The <em>remove-class</em> Transform will remove a set of classes from the nodes returned by a selector.<p>  
 <pre class="prettyprint linenums lang-clj">
 (remove-class "class1" "class2" ...)
@@ -333,6 +334,24 @@ button[foo=bar] {
   "#button12" (ef/substitute "I replaced the button"))      
 </pre>
       </section>
+     <section id="doc-remove-node">
+        <div class="page-header">
+          <h3>Transform: <em>remove-node</em></h3>
+        </div>
+
+      <p>The <em>remove-node</em> transform removes the node returned
+      by a selector from the dom.<p>  
+<pre class="prettyprint linenums lang-clj">
+(remove-node)
+</pre>
+      <p>Example: <button id="button22">click me</button> -button
+      will disappear when you click it.
+      <p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
+(em/defaction remove-node-demo []
+  "#button22" (ef/remove-node))      
+</pre>
+      </section>
       <section id="doc-clone-for">
         <div class="page-header">
           <h3>Transform: <em>clone-for</em></h3>
@@ -456,8 +475,9 @@ CSS:
           <h3>Transform: <em>filter</em></h3>
         </div>
 
-      <p>The <em>filter</em> apply a test function to the node an only if the test
-        function returns true<p>  
+      <p>The <em>filter</em> applies a test function to each node
+        returned by the selector and only if the test
+        function returns true is the node passed to the transform.<p>  
 <pre class="prettyprint linenums lang-clj">
 (filter test-func transform)
 </pre>

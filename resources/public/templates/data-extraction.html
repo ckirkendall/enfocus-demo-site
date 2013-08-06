@@ -35,15 +35,15 @@
 <p>Multiple Extractions</p>
 <pre class="prettyprint linenums lang-clj">
 (from a-node
-    :key1 [selector1] (extractor arg1 ...)
-    :key2 [selector2] (extractor arg1 ...)) 
+    :key1 selector1 (extractor arg1 ...)
+    :key2 selector2 (extractor arg1 ...)) 
 ;returns a map {:key1 value|list :key2 value|list
 
 ;or implied js/document as root node
 
 (from 
-    :key1 [selector1] (extractor arg1 ...)
-    :key2 [selector2] (extractor arg1 ...))
+    :key1 selector1 (extractor arg1 ...)
+    :key2 selector2 (extractor arg1 ...))
 </pre>
 <p>In the first case, <em>from</em> is passed a node/node set or selector and a extractor.  It then calls the 
 extractor on each element in the node set. It will return either a single value if a single node is passed in and
@@ -108,9 +108,9 @@ more than one node is passed in it will return a list of values.<p>
 <pre class="prettyprint linenums lang-clj">
 (defn get-prop-demo []
   (let [values (ef/from js/document
-                 :field1 ["#get-prop-field1"] (em/get-prop :value)
-                 :field2 ["#get-prop-field2"] (em/get-prop :value)
-                 :field3 ["input[name='get-prop-field3']"] (em/filter #(.-checked %)
+                 :field1 "#get-prop-field1" (em/get-prop :value)
+                 :field2 "#get-prop-field2" (em/get-prop :value)
+                 :field3 "input[name='get-prop-field3']" (em/filter #(.-checked %)
                                                                    (em/get-prop :value)))]
       (ef/at "#get-prop-demo" (em/content (pr-str values)))))                    
 </pre>

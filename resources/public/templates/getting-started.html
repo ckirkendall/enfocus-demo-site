@@ -136,12 +136,12 @@ effects can be chained.</p>
 <p>CLJS:</p>
 <pre class="prettyprint linenums lang-clj">
 (em/defaction resize-div [width] 
-  ["#rz-demo"] (ef/chain 
-                 (ef/resize width :curheight 500)
-                 (ef/resize 5 :curheight 500)))
+  "#rz-demo" (ef/chain 
+               (ef/resize width :curheight 500)
+               (ef/resize 5 :curheight 500)))
 
 (em/defaction setup []
-  ["#button2"] (ef/listen #(resize-div 200)))
+  "#button2" (ef/listen #(resize-div 200)))
 	
 (set! (.-onload js/window) setup)         
 </pre>

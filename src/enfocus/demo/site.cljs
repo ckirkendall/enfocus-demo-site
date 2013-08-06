@@ -137,6 +137,10 @@
 (em/defaction sub-demo []
   "#button12" (ef/substitute "I replaced the button")) 
 
+(em/defaction remove-node-demo []
+  "#button22" (ef/remove-node)) 
+
+
 (defn clone-for-demo []
   (let [fruit-data {"apple" 5, "pear" 6}]
     (ef/at "#clone-for-demo tbody > tr:first-child" 
@@ -189,6 +193,7 @@
   "#after-link" (ev/listen :click #(ef/at "#doc-after" (scroll-to)))
   "#before-link" (ev/listen :click #(ef/at "#doc-before" (scroll-to)))
   "#substitute-link" (ev/listen :click #(ef/at "#doc-sub" (scroll-to)))
+  "#remove-node-link" (ev/listen :click #(ef/at "#doc-remove-node" (scroll-to)))
   "#clone-for-link" (ev/listen :click #(ef/at "#doc-clone-for" (scroll-to)))
   "#wrap-link" (ev/listen :click #(ef/at "#doc-wrap" (scroll-to)))
   "#unwrap-link" (ev/listen :click #(ef/at "#doc-unwrap" (scroll-to)))
@@ -218,7 +223,8 @@
   "#button18" (ev/listen :click filter-demo)
   "#button19" (ev/listen :click focus-demo)
   "#button20" (ev/listen :click blur-demo)
-  "#button21" (ev/listen :click replace-vars-demo))
+  "#button21" (ev/listen :click replace-vars-demo)
+  "#button22" (ev/listen :click remove-node-demo))
 
 ;########################################
 ; handling events page actions

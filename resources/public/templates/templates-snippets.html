@@ -30,12 +30,12 @@ possibly developed by a designer, and work with them unaltered.<p>
   dom fragments. Compiled resources are bundled with the exported javascript.</p>
 <pre class="prettyprint linenums lang-clj">
 ;remote
-(deftamplate my-template resource-uri [arg1 arg2 ...] 
+(deftemplate my-template resource-uri [arg1 arg2 ...] 
   selector1 (transform arg1)
   selector2 (transform arg2))
 
 ;compiled - recommended
-(deftamplate my-template :compiled resource-uri [arg1 arg2 ...] 
+(deftemplate my-template :compiled resource-uri [arg1 arg2 ...] 
   selector1 (transform arg1)
   selector2 (transform arg2))
 
@@ -97,7 +97,8 @@ and use pieces to build the final view.<p>
             (map #(snippet2 % (fruit-data %)) (keys fruit-data)))) 
                            
 (em/at "#button2" (em/listen :click 
-                    #(em/at "#snippet-demo" (em/content (template-demo2)))))              
+                    #(em/at "#snippet-demo" 
+                             (em/content (template-demo2 {"apple" 6, "pear" 5})))))              
 </pre>
 <p>The code above pull back template-demo.html, replaces the heading with "fruit" and "quantity", and
 finally iterates over the fruit data and calls our snippet to build the rows of the table. </p>
@@ -119,7 +120,7 @@ finally iterates over the fruit data and calls our snippet to build the rows of 
 <p>The following action is triggered when we click the button</p>
 <pre class="prettyprint linenums lang-clj">
 (defn my-hic-template [val]
-  (ef/html [:tr '([:td "hiccup"] [:td "test"])] {:name "form1"}))
+  (ef/html [:tr '([:td "hiccup"] [:td "test"]) {:name "form1"}]))
 
 (em/defaction hiccup-demo []
   "#hic-demo tbody" (ef/append (my-hic-template "testing")))
