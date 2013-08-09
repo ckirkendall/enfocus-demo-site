@@ -32,9 +32,9 @@ be found <a href="http://closure-library.googlecode.com/svn/docs/class_goog_even
 <p>Example: <button id="button1">click me</button></p>
 <p>The following action is triggered when we click the button</p>
 <pre class="prettyprint linenums lang-clj">
-(em/at "#button1" (em/listen :click 
-                             #(em/at (.-currentTarget %) 
-                                (em/content "I have been replaced"))))       
+(em/at "#button1" (ev/listen :click 
+                             #(ef/at (.-currentTarget %) 
+                                (ef/content "I have been replaced"))))       
 </pre>
 <p>Notice in the above example, we are using the <em>at</em> form as event handler.</p>
      </section>
@@ -53,15 +53,15 @@ returned by the selector.</p>
 <p>The first defaction was called to setup the :mouseenter event on text "hover over me". The
 second defaction is triggered when we click the button.</p>
 <pre class="prettyprint linenums lang-clj">
-(em/at "#remove-demo" 
+(ef/at "#remove-demo" 
   (do->
-    (em/listen :mouseenter 
-      #(at (.-currentTarget %) (em/add-class "highlight"))) 
-    (em/listen :mouseleave 
-      #(at (.-currentTarget %) (em/remove-class "highlight"))))) 
+    (ev/listen :mouseenter 
+      #(ef/at (.-currentTarget %) (ef/add-class "highlight"))) 
+    (ev/listen :mouseleave 
+      #(ef/at (.-currentTarget %) (ef/remove-class "highlight"))))) 
 
 (em/defaction remove-demo []
-  "#remove-demo" (em/remove-listeners :mouseenter :mouseleave))   
+  "#remove-demo" (ev/remove-listeners :mouseenter :mouseleave))   
 </pre>
      </section>
 
