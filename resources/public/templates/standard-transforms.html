@@ -382,7 +382,7 @@ button[foo=bar] {
 (defn clone-for-demo []
 (let [fruit-data {"apple" 5, "pear" 6}]
 (ef/at "#clone-for-demo tbody > tr:first-child" 
-  (ef/clone-for [fr (vec fruit-data)]
+  (em/clone-for [fr (vec fruit-data)]
     "*:first-child" (ef/content (first fr))
     "*:last-child"  (ef/content (str (second fr)))))))
 </pre>
