@@ -108,11 +108,11 @@ more than one node is passed in it will return a list of values.<p>
 <pre class="prettyprint linenums lang-clj">
 (defn get-prop-demo []
   (let [values (ef/from js/document
-                 :field1 "#get-prop-field1" (em/get-prop :value)
-                 :field2 "#get-prop-field2" (em/get-prop :value)
-                 :field3 "input[name='get-prop-field3']" (em/filter #(.-checked %)
-                                                                   (em/get-prop :value)))]
-      (ef/at "#get-prop-demo" (em/content (pr-str values)))))                    
+                 :field1 "#get-prop-field1" (ef/get-prop :value)
+                 :field2 "#get-prop-field2" (ef/get-prop :value)
+                 :field3 "input[name='get-prop-field3']" (ef/filter #(.-checked %)
+                                                                   (ef/get-prop :value)))]
+      (ef/at "#get-prop-demo" (ef/content (pr-str values)))))                    
 </pre>
 </section>
       <section id="doc-get-attr">
@@ -133,8 +133,8 @@ more than one node is passed in it will return a list of values.<p>
 <p>The following action is triggered when we click the button.</p>
 <pre class="prettyprint linenums lang-clj">
 (defn get-attr-demo []
-  (let [value (ef/from "#get-attr-img" (em/get-attr :src))]
-      (ef/at "#get-attr-demo" (em/content (pr-str value)))))                    
+  (let [value (ef/from "#get-attr-img" (ef/get-attr :src))]
+      (ef/at "#get-attr-demo" (ef/content (pr-str value)))))                    
 </pre>
 </section>
       <section id="doc-get-text">
@@ -154,8 +154,8 @@ more than one node is passed in it will return a list of values.<p>
 <p>The following action is triggered when we click the button.</p>
 <pre class="prettyprint linenums lang-clj">
 (defn get-text-demo []
-  (let [txt (em/from "#button3" (em/get-text))]
-    (em/at "#get-text-demo" (em/content txt))))  
+  (let [txt (ef/from "#button3" (ef/get-text))]
+    (ef/at "#get-text-demo" (ef/content txt))))  
 </pre>
 </section>
 </div>
