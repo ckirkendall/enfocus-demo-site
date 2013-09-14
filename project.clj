@@ -2,7 +2,7 @@
   :description "enfocus documentation site"
   :url "http://ckirkendall.github.io/enfocus-site"
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [enfocus "2.0.0-SNAPSHOT"]
+                 [enfocus "2.0.0-beta2"]
                  [ring/ring-core "1.1.8"]
                  [ring/ring-jetty-adapter "1.1.8"]]
   :plugins [[lein-cljsbuild "0.3.2"]

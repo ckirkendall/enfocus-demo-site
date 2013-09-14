@@ -240,12 +240,16 @@
   "#content-pane" (ef/do->
                       (ef/content (doc-event))
                       (reset-scroll))
-  "#listen-link" (ev/listen :click #(ef/at "#doc-listen" (scroll-to)))         
+  "#listen-link" (ev/listen :click #(ef/at "#doc-listen" (scroll-to)))
+  "#live-link" (ev/listen :click #(ef/at "#doc-listen-live" (scroll-to)))
   "#remove-link" (ev/listen :click #(ef/at "#doc-remove" (scroll-to)))         
   "#support-link" (ev/listen :click #(ef/at "#doc-support" (scroll-to)))
   "#button1" (ev/listen :click 
                           #(ef/at (.-currentTarget %) 
-                             (ef/content "I have been replaced")))
+                                  (ef/content "I have been replaced")))
+  "#doc-listen-live" (ev/listen-live :click "#button3" 
+                                     #(ef/at (.-currentTarget %) 
+                                             (ef/content "I have been replaced")))
   "#remove-demo" (ef/do->
                      (ev/listen :mouseenter #(ef/at (.-currentTarget %) (ef/add-class "highlight"))) 
                      (ev/listen :mouseleave #(ef/at (.-currentTarget %) (ef/remove-class "highlight"))))
@@ -341,7 +345,7 @@
   "#button3" (ev/listen :click hiccup-demo))
 
 ;########################################
-; templates and snippets actions
+; extractor actions
 ;########################################
 
 

@@ -10,7 +10,8 @@
     <div class="span3 bs-docs-sidebar">
       <ul class="table-contents nav nav-list bs-docs-sidenav">
         <li id="listen-link"><a>listen</a></li>
-        <li id="remove-link"><a>remove-listeners</a></li>             
+        <li id="live-link"><a>listen-live</a></li> 
+        <li id="remove-link"><a>remove-listeners</a></li> 
         <li id="support-link"><a>supported events</a></li>
       </ul>
     </div>
@@ -38,6 +39,34 @@ be found <a href="http://closure-library.googlecode.com/svn/docs/class_goog_even
 </pre>
 <p>Notice in the above example, we are using the <em>at</em> form as event handler.</p>
      </section>
+
+      <section id="doc-listen-live">
+        <div class="page-header">
+          <h3>Transform: <em>listen-live</em></h3>
+        </div>
+
+<p>The <em>listen-live</em> transform places an event listener on the
+  selected node.  When the event is triggered the event the event
+  target is tested to see if it matches the selector and new event is
+  created if it does.  This is very similar to jQuery's <em>on</em> or
+  <em>live</em> functionality.
+<p>The <em>event object</em> is of type goog.event.Event.  Documentation for this object can
+be found <a href="http://closure-library.googlecode.com/svn/docs/class_goog_events_Event.html">here</a>.</p>
+ 
+<pre class="prettyprint linenums lang-clj">
+(listen-live :click selector (fn [event].....))
+</pre>
+<p>Example: <button id="button3">click me</button></p>
+<p>The following action is triggered when we click the button</p>
+<pre class="prettyprint linenums lang-clj">
+(em/at "#doc-listen-live" 
+       (ev/listen-live :click "#button3" 
+              #(ef/at (.-currentTarget %) 
+                      (ef/content "I have been replaced"))))       
+</pre>
+<p>Notice in the above example, we are using the <em>at</em> form as event handler.</p>
+     </section>
+
 
       <section id="doc-remove">
         <div class="page-header">
