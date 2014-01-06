@@ -11,6 +11,7 @@
       <ul class="table-contents nav nav-list bs-docs-sidenav">
         <li id="from-link"><a>The <em>from</em> form</a></li>
         <li id="read-form-link"><a>read-form</a></li>
+        <li id="read-input-link"><a>read-form-input</a></li>
         <li id="get-prop-link"><a>get-prop</a></li>
         <li id="get-attr-link"><a>get-attr</a></li>
         <li id="get-text-link"><a>get-text</a></li>      
@@ -63,7 +64,7 @@ return map under the given key.</p>
 
 <p>The <em>read-form</em> extractor returns a the content of form as a
   clojure map. If
-more than one node is passed in it will return a list of values.<p>  
+more than one node is passed in it will return a set of values.<p>  
 <pre class="prettyprint linenums lang-clj">
 (read-form)
 </pre>
@@ -85,6 +86,52 @@ more than one node is passed in it will return a list of values.<p>
       (ef/at "#read-form-demo" (ef/content (pr-str values)))))                    
 </pre>
 </section>
+      <section id="doc-read-input">
+        <div class="page-header">
+          <h3>Extractor: <em>read-form-input</em></h3>
+        </div>
+
+<p>The <em>read-form-input</em> extractor returns a the value of
+  input as a string. If the value represents more than one value a set
+  of values is returned.<p>  
+<pre class="prettyprint linenums lang-clj">
+(read-input-value)
+</pre>
+<div>
+<form id="read-input-test" name="read-input-test">
+<input type="text" name="input1" id="input1" value="type here"><br>
+<input name="input2" type="checkbox" value="one">one<br>
+<input name="input2" type="checkbox" value="two">two<br>
+<input name="input2" type="checkbox" value="three">three<br>
+<select name="input3">
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+</select>
+</form>
+</div>
+<p>Example: <button id="input-demo-btn">click me</button></p>
+<div id="read-input-demo"> 
+<table>
+ <tr><th>Input 1:</th><td class="input1"></td></tr>
+ <tr><th>Input 2:</th><td class="input2"></td></tr>
+ <tr><th>Input 3:</th><td class="input3"></td></tr> 
+</table>
+</div>
+<p>The following action is triggered when we click the button.</p>
+<pre class="prettyprint linenums lang-clj">
+(defn read-input-demo []
+  (let [val1 (ef/from "input[name='input1']" (ef/read-form-input))
+        val2 (ef/from "input[name='input2']" (ef/read-form-input))
+        val3 (ef/from "select[name='input3']" (ef/read-form-input))]
+      (ef/at (by-id "read-input-demo") 
+         ".input1" (ef/content (pr-str val1))
+         ".input2" (ef/content (pr-str val2))
+         ".input3" (ef/content (pr-str val3)))))                    
+</pre>
+</section>
+
+
       <section id="doc-get-prop">
         <div class="page-header">
           <h3>Extractor: <em>get-prop</em></h3>

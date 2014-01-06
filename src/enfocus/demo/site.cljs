@@ -407,8 +407,19 @@
 
 (defn read-form-demo []
   (let [values (ef/from "#read-form-test" (ef/read-form))]
-      (ef/at "#read-form-demo" (ef/content (pr-str values)))))                    
+    (ef/at "#read-form-demo" (ef/content (pr-str values)))))
 
+(defn by-id [id]
+  (.getElementById js/document id))
+
+(defn read-input-demo []
+  (let [val1 (ef/from "input[name='input1']" (ef/read-form-input))
+        val2 (ef/from "input[name='input2']" (ef/read-form-input))
+        val3 (ef/from "select[name='input3']" (ef/read-form-input))]
+      (ef/at (by-id "read-input-demo") 
+         ".input1" (ef/content (pr-str val1))
+         ".input2" (ef/content (pr-str val2))
+         ".input3" (ef/content (pr-str val3)))))
 
 (em/defaction doc-from-page []
   "#content-pane" (ef/do->
@@ -419,10 +430,12 @@
   "#get-attr-link" (ev/listen :click #(ef/at "#doc-get-attr" (scroll-to)))         
   "#get-text-link" (ev/listen :click #(ef/at "#doc-get-text" (scroll-to)))
   "#read-form-link" (ev/listen :click #(ef/at "#doc-read-form" (scroll-to)))
+  "#read-input-link" (ev/listen :click #(ef/at "#doc-read-input" (scroll-to)))
   "#button1" (ev/listen :click get-prop-demo)
   "#button2" (ev/listen :click get-attr-demo)
   "#button3" (ev/listen :click get-text-demo)
-  "#button4" (ev/listen :click read-form-demo))
+  "#button4" (ev/listen :click read-form-demo)
+  "#input-demo-btn" (ev/listen :click read-input-demo))
 
 
 
