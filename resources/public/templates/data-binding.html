@@ -1,0 +1,169 @@
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>View Bindings</h1>
+    <p class="lead">Binding the applications state to the view.</p>
+  </div>
+</header>
+
+<div class="content-page">
+  <div class="row">
+    <div class="span3 bs-docs-sidebar">
+      <ul class="table-contents nav nav-list bs-docs-sidenav">
+        <li id="bind-view-link"><a>bind-view</a></li>
+        <li id="bind-input-link"><a>bind-input</a></li>
+        <li id="bind-form-link"><a>bind-form</a></li>
+      </ul>
+    </div>
+
+    <div class="span9">
+      <section id="doc-bind-view">
+        <div class="page-header">
+          <h3>The <em>bind-view</em> transform</h3>
+        </div>
+
+<p>The <em>bind-view</em> transform allows us to bind an atom to the
+  view directly.  An update to the atom will cause the view to
+  re-render:</p>
+<pre class="prettyprint linenums lang-clj">
+(at node (bind-view ref (fn [node value] ...)))
+</pre>
+
+<p>Example: <button id="button1">click me</button></p>
+<div id="bind-view-demo">
+<table>
+ <tr><th>First:</th><td class="first"></td></tr>
+ <tr><th>Last:</th><td class="last"></td></tr> 
+</table>
+</div>
+<p>The following action will be triggered. when the button is
+  clicked.  This will set the value of the atom and update the view.</p>
+<pre class="prettyprint linenums lang-clj">
+(def my-atom (atom {:first "Creighton" :last "Kirkendall"}))
+ 
+(defn render-fn [node data]
+  (ef/at node
+    ".first" (ef/content (:first data))
+    ".last"  (ef/content (:last data))))
+
+
+(ef/at 
+  "#bind-view-demo" (bind/bind-view my-atom render-fn)
+  "#button1" (ef/listen :click 
+                        #(reset! data {:first "Abby"
+                                       :last  "Grace"))))                   
+</pre>
+</section>
+      <section id="doc-bind-input">
+        <div class="page-header">
+          <h3>The <em>bind-input</em> transform</h3>
+        </div>
+
+<p>The <em>bind-input</em> transform allows us to bind the value of an
+  atom to an input field directly.  An update to the atom will cause
+  the value of the input field to updated.  If the provided event type
+  is triggered the value of the atom will be updated to match the input
+  value. Through options you can specify a mapping from the value of
+  the input field to a specific field in the map or obj. </p>
+<pre class="prettyprint linenums lang-clj">
+(at input-node (bind-input ref {:event :change})))
+
+;;or with field mapping {:mapping [:key1 :key2] ...}
+
+(at input-node (bind-input ref {:event :change
+                                :mapping [:key1 :key2]})
+</pre>
+
+<p>Example: <input type="text" id="my-input">
+            <select id="my-select" multiple="multiple">
+               <option value="One">One</option>
+               <option value="Two">Two</option>
+               <option value="Three">Three</option>
+            </select>
+</p>
+<div id="bind-input-demo">
+<table>
+ <tr><th>Input 1:</th><td class="input1"></td></tr>
+ <tr><th>Input 2:</th><td class="input2"></td></tr> 
+</table>
+</div>
+
+<p>The following action will be triggered when either of the input
+  fields are changed.</p>
+<pre class="prettyprint linenums lang-clj">
+(def my-data (atom {:input1 "type here"
+                    :input2 #{"One" "Three"}}))
+ 
+(defn input-render-fn [node data]
+  (ef/at node
+    ".input1" (ef/content (:input1 data))
+    ".input2"  (ef/content (pr-str (:input2 data)))))
+
+(ef/at 
+  "#bind-input-demo" (bind-view my-data input-render-fn)
+  "#my-input" (bind/bind-input my-data {:event :keyup
+                                        :mapping [:input1]})
+  "#my-select" (bind/bind-input my-data {:event :change
+                                         :mapping [:input2]}))
+</pre>
+</section>
+      <section id="doc-bind-form">
+        <div class="page-header">
+          <h3>The <em>bind-form</em> transform</h3>
+        </div>
+
+<p>The <em>bind-form</em> transform allows us to bind the value of an
+  atom to an input values of a form.  An update to the atom will cause
+  the values of the input fields to be updated.  If the submit event
+  type is triggered the value of the atom will be updated to match the
+  input values. Through options you can specify a mapping from the
+  value of the input fields to a specific field in the map or obj. </p>
+<pre class="prettyprint linenums lang-clj">
+(at form-node (bind-form ref)))
+
+;;or with field mapping {:mapping {:input1 [:key1 :key2]
+                                   :input2 [:key3 :key4]}
+
+(at form-node (bind-form ref {:mapping {:input1 [:key1 :key2]
+                                        :input2 [:key3 :key4]})
+</pre>
+
+<p>Example: <form id="my-form">
+            <input name="input1" type="text" >
+            <select name="input2" multiple="multiple">
+               <option value="One">One</option>
+               <option value="Two">Two</option>
+               <option value="Three">Three</option>
+            </select>
+            <button type="submit">Click Me</button>
+            <form>
+</p>
+<div id="bind-form-demo">
+<table>
+ <tr><th>Input 1:</th><td class="form-input1"></td></tr>
+ <tr><th>Input 2:</th><td class="form-input2"></td></tr> 
+</table>
+</div>
+
+<p>The following action will be triggered when either of the input
+  fields are changed.</p>
+<pre class="prettyprint linenums lang-clj">
+(def my-form-data (atom {:input1 "type here"
+                         :input2 #{"One" "Three"}}))
+ 
+(defn form-demo-render-fn [node data]
+  (ef/at node
+    ".form-input1" (ef/content (:input1 data))
+    ".form-input2"  (ef/content (pr-str (:input2 data)))))
+
+(ef/at 
+ "#bind-input-demo" (bind/bind-view my-form-data form-demo-render-fn)
+  "#my-form" (bind/bind-form my-form-data))
+                   
+</pre>
+</section>
+
+
+
+</div>
+</div>
+</div>

@@ -2,6 +2,7 @@
   (:require [enfocus.core :as ef]
             [enfocus.effects :as effects]
             [enfocus.events :as ev]
+            [enfocus.bind :as bind]
             [goog.dom :as dom])
   (:require-macros [enfocus.macros :as em]))
 
@@ -17,7 +18,8 @@
          doc-template-page
          doc-from-page
          whats-new-page
-         read-form-demo)
+         read-form-demo
+         doc-view-binding-page)
 
 (defn scroll-to []
   (fn [nod]
@@ -30,17 +32,53 @@
 (defn highlight-code [] (js/prettyPrint))
 
 (defn navigate [page]
-  (fn [] (page) (highlight-code)))
+  (page)
+  (highlight-code)
+  (.scrollTo js/window 0 0))
+
+
+(defn navigation-watcher [ky atm oval nval]
+  (condp = nval
+    ""  (set!  (.-location js/document) "index.html")
+    "about-page" (navigate about-page)
+    "quick-start" (navigate gstarted-page)
+    "doc-trans" (navigate doc-trans-page)
+    "doc-events" (navigate doc-events-page)
+    "doc-effects" (navigate doc-effects-page)
+    "doc-template" (navigate doc-template-page)
+    "doc-extract" (navigate doc-from-page)
+    "whats-new" (navigate whats-new-page)
+    "view-binding" (navigate doc-view-binding-page)
+    (ef/log-debug (pr-str "ERROR IN NAVIGATION" oval nval))))
+
+(def url-hash (atom ""))
+
+(add-watch url-hash :nav navigation-watcher)
+
+(defn update-hash [hash-key]
+  (fn [event] 
+    (.preventDefault event)
+    (set! (.-hash (.-location js/document)) (str "#" (name hash-key)))))
+
+(.setInterval
+ js/window
+ (fn []
+   (let [ohash (.-hash (.-location js/document))
+         hash (if ohash (.substring ohash 1) "")]
+     (when (not (= @url-hash hash))
+       (reset! url-hash hash))))
+ 50)
 
 (em/defaction setup-menu [width height]
-  "#about-button" (ev/listen :click (navigate about-page))
-  ".quick-start"  (ev/listen :click (navigate gstarted-page))
-  "#doc-trans"    (ev/listen :click (navigate doc-trans-page))
-  "#doc-events"   (ev/listen :click (navigate doc-events-page)) 
-  "#doc-effects"  (ev/listen :click (navigate doc-effects-page))
-  "#doc-remote"   (ev/listen :click (navigate doc-template-page))
-  "#doc-extract"  (ev/listen :click (navigate doc-from-page))
-  "#whats-new-btn"(ev/listen :click (navigate whats-new-page)))
+  "#about-button" (ev/listen :click (update-hash :about-page))
+  ".quick-start"  (ev/listen :click (update-hash :quick-start))
+  "#doc-trans"    (ev/listen :click (update-hash :doc-trans))
+  "#doc-events"   (ev/listen :click (update-hash :doc-events)) 
+  "#doc-effects"  (ev/listen :click (update-hash :doc-effects))
+  "#doc-remote"   (ev/listen :click (update-hash :doc-template))
+  "#doc-extract"  (ev/listen :click (update-hash :doc-extract))
+  "#whats-new-btn"(ev/listen :click (update-hash :whats-new))
+  "#doc-binding"  (ev/listen :click (update-hash :view-binding)))
  
 
 (set! (.-onload js/window) setup-menu)
@@ -50,7 +88,7 @@
 ; home page actions
 ;#######################################
 
-(em/deftemplate about "templates/about.html" [])
+(em/deftemplate about :compiled "public/templates/about.html" [])
 
 (em/defaction about-page []
   "#content-pane" (ef/do->
@@ -62,7 +100,7 @@
 ; what's new page actions
 ;#######################################
 
-(em/deftemplate whats-new "templates/whats-new.html" [])
+(em/deftemplate whats-new :compiled "public/templates/whats-new.html" [])
 
 (em/defaction whats-new-page []
   "#content-pane" (ef/do->
@@ -75,7 +113,7 @@
 ; quick start page actions
 ;#######################################
 
-(em/deftemplate gstarted "templates/getting-started.html" [])
+(em/deftemplate gstarted :compiled "public/templates/getting-started.html" [])
 
 (em/defaction gstarted-page []
   "#content-pane" (ef/do->
@@ -97,7 +135,7 @@
 ; standard transform page actions
 ;########################################
 
-(em/deftemplate doc-trans "templates/standard-transforms.html" [])
+(em/deftemplate doc-trans :compiled "public/templates/standard-transforms.html" [])
 
 (em/defaction content-demo []
   "#button1" (ef/content "I have been clicked"))
@@ -230,7 +268,7 @@
 ; handling events page actions
 ;########################################
 
-(em/deftemplate doc-event "templates/handling-events.html" [])
+(em/deftemplate doc-event :compiled "public/templates/handling-events.html" [])
 
 
 (em/defaction remove-demo []
@@ -260,7 +298,7 @@
 ; effects and timing page actions
 ;########################################
 
-(em/deftemplate doc-effect "templates/effects-timing.html" [])
+(em/deftemplate doc-effect :compiled "public/templates/effects-timing.html" [])
 
 (em/defaction resize-demo [] 
   "#rz-demo" (effects/resize 200 :curheight 500
@@ -302,9 +340,9 @@
 ; templates and snippets actions
 ;########################################
 
-(em/deftemplate doc-template "templates/templates-snippets.html" [])
+(em/deftemplate doc-template :compiled "public/templates/templates-snippets.html" [])
 
-(em/deftemplate template-demo "templates/template-demo.html" [fruit-data] 
+(em/deftemplate template-demo :compiled "public/templates/template-demo.html" [fruit-data] 
   "#heading1" (ef/content "fruit")  
   "thead tr > *:last-child" (ef/content "quantity")
   "tbody > tr:not(:first-child)" (ef/remove-node)
@@ -313,12 +351,12 @@
                                            "*:first-child" (ef/content (first fr))
                                            "*:last-child" (ef/content (str (second fr)))))
 
-(em/defsnippet snippet2 "templates/template-demo.html" "tbody > *:first-child" 
+(em/defsnippet snippet2 :compiled "public/templates/template-demo.html" "tbody > *:first-child" 
   [fruit quantity] 
   "tr > *:first-child" (ef/content fruit)
   "tr > *:last-child" (ef/content (str quantity)))
 
-(em/deftemplate template-demo2 "templates/template-demo.html" [fruit-data] 
+(em/deftemplate template-demo2 :compiled "public/templates/template-demo.html" [fruit-data]
   "#heading1" (ef/content "fruit")  
   "thead tr > *:last-child" (ef/content "quantity")
   "tfoot tr > *:last-child" (ef/content (str (apply + (vals fruit-data))))
@@ -349,7 +387,7 @@
 ;########################################
 
 
-(em/deftemplate doc-from "templates/data-extraction.html" [])
+(em/deftemplate doc-from :compiled "public/templates/data-extraction.html" [])
 
 (defn get-prop-demo []
   (let [values (ef/from js/document
@@ -389,3 +427,53 @@
 
 
 
+;########################################
+; view bindings actions
+;########################################
+
+(em/deftemplate doc-binding :compiled "public/templates/data-binding.html" [])
+
+(def my-atom (atom {:first "Creighton" :last "Kirkendall"}))
+
+(defn render-fn [node data]
+  (ef/at node
+    ".first" (ef/content (:first data))
+    ".last"  (ef/content (:last data))))
+
+(def my-data (atom {:input1 "type here"
+                    :input2 #{"One" "Three"}}))
+
+(defn input-render-fn [node data]
+  (ef/at node
+    ".input1" (ef/content (:input1 data))
+    ".input2"  (ef/content (pr-str (:input2 data)))))
+
+
+(def my-form-data (atom {:input1 "type here"
+                         :input2 #{"One" "Three"}}))
+ 
+(defn form-demo-render-fn [node data]
+  (ef/at node
+    ".form-input1" (ef/content (:input1 data))
+    ".form-input2"  (ef/content (pr-str (:input2 data)))))
+
+(em/defaction doc-view-binding-page [] 
+  "#content-pane" (ef/do->
+                     (ef/content (doc-binding)))         
+  "#bind-view-link" (ev/listen :click
+                               #(ef/at "#doc-bind-view" (scroll-to))) 
+  "#bind-input-link" (ev/listen :click
+                                #(ef/at "#doc-bind-input" (scroll-to)))  
+  "#bind-form-link" (ev/listen :click
+                               #(ef/at "#doc-bind-form" (scroll-to)))
+  "#bind-view-demo" (bind/bind-view my-atom render-fn)
+  "#button1" (ev/listen :click 
+                        #(reset! my-atom {:first "Abby"
+                                          :last  "Grace"}))
+  "#bind-input-demo" (bind/bind-view my-data input-render-fn)
+  "#my-input" (bind/bind-input my-data {:event :keyup
+                                        :mapping [:input1]})
+  "#my-select" (bind/bind-input my-data {:event :change
+                                        :mapping [:input2]})
+  "#bind-form-demo" (bind/bind-view my-form-data form-demo-render-fn)
+  "#my-form" (bind/bind-form my-form-data))
