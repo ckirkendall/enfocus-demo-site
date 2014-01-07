@@ -213,6 +213,21 @@
 (em/defaction replace-vars-demo []
   "#rvar-example" (ef/replace-vars {:name "Kurt" :location "home"}))
 
+
+(em/defaction set-form-demo []
+  "#my-form" (ef/set-form {:input1 "Testing" 
+                           :input2 #{"one" "two"}
+                           :input3 #{"option1" "option3"}
+                           :input4 "radio2"}))
+
+
+(em/defaction set-input-demo []
+  "input[name='field1']" (ef/set-form-input "Testing") 
+  "select[name='field2']" (ef/set-form-input #{"one" "two"})
+  "input[name='field3']" (ef/set-form-input #{"option1" "option3"})
+  "input[name='field4']" (ef/set-form-input "radio3"))
+
+
 (em/defaction doc-trans-page [] 
   "#content-pane" (ef/do->
                       (ef/content (doc-trans))
@@ -240,7 +255,9 @@
   "#filter-link" (ev/listen :click #(ef/at "#doc-filter" (scroll-to)))
   "#focus-link" (ev/listen :click #(ef/at "#doc-focus" (scroll-to)))
   "#rvars-link" (ev/listen :click #(ef/at "#doc-rvars" (scroll-to)))
-  "#set-data-link" (ev/listen :click #(ef/at "#doc-set-data" (scroll-to))) 
+  "#set-data-link" (ev/listen :click #(ef/at "#doc-set-data" (scroll-to)))
+  "#set-form-link" (ev/listen :click #(ef/at "#doc-set-form" (scroll-to)))
+  "#set-input-link" (ev/listen :click #(ef/at "#doc-set-input" (scroll-to)))
   "#button1" (ev/listen :click content-demo)
   "#button2" (ev/listen :click html-content-demo)
   "#button3" (ev/listen :click set-attr-demo)
@@ -262,7 +279,9 @@
   "#button19" (ev/listen :click focus-demo)
   "#button20" (ev/listen :click blur-demo)
   "#button21" (ev/listen :click replace-vars-demo)
-  "#button22" (ev/listen :click remove-node-demo))
+  "#button22" (ev/listen :click remove-node-demo)
+  "#button23" (ev/listen :click set-form-demo)
+  "#button24" (ev/listen :click set-input-demo))
 
 ;########################################
 ; handling events page actions

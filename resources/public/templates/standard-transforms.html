@@ -34,6 +34,8 @@
         <li id="focus-link"><a>focus & blur</a></li>
         <li id="rvars-link"><a>replace-vars</a></li>
         <li id="set-data-link"><a>set-data</a></li>
+        <li id="set-form-link"><a>set-form</a></li>
+        <li id="set-input-link"><a>set-form-input</a></li>
       </ul>
     </div>
     <div class="span9">
@@ -542,6 +544,84 @@ CSS:
 </pre> 
       </section>
 
-    </div>
+    <section id="doc-set-form">
+        <div class="page-header">
+          <h3>Transform: <em>set-form</em></h3>
+        </div>
+
+      <p>The <em>set-form</em> transform will set the values of all
+         inputs of a given form that who's names match the keys of a
+         given map.  This is the reverse of read-form extractor.<p>  
+<pre class="prettyprint linenums lang-clj">
+(set-form {:field1 "value" :my-select ${"val1" "val2"}}) 
+</pre>
+      <p>Example: <button id="button23">populate form</button> 
+<div id="set-form-demo">
+<form id="my-form">
+<input type="text" name="input1"><br>
+<select name="input2" multiple="multiple">
+  <option value="one">One</option>
+  <option value="two">Two</option>
+  <option value="three">Three</option>
+</select><br>
+<span>option1: <input type="checkbox" name="input3" value="option1"></span>
+<span>option2: <input type="checkbox" name="input3" value="option2"></span>
+<span>option3: <input type="checkbox" name="input3" value="option3"></span>
+<br>
+<span>radio1: <input type="radio" name="input4" value="radio1"></span>
+<span>radio2: <input type="radio" name="input4" value="radio2"></span>
+<span>radio3: <input type="radio" name="input4" value="radio3"></span>
+</form>
+</div>
+      <p>The following action is triggered when we click the buttons.</p>
+<pre class="prettyprint linenums lang-clj">
+(em/defaction set-form-demo []
+  "#my-form" (ef/set-form {:input1 "Testing" 
+                           :input2 #{"one" "two"}
+                           :input3 #{"option1" "option3"}
+                           :input4 "radio2"}))
+</pre>
+      </section>
+<section id="doc-set-input">
+        <div class="page-header">
+          <h3>Transform: <em>set-form-input</em></h3>
+        </div>
+
+      <p>The <em>set-form-input</em> transform will set the value of a
+         single input to a specific value.  Setting multiple values
+         take a set of values.  This is the reverse of read-form-input
+         extractor.<p>  
+<pre class="prettyprint linenums lang-clj">
+(set-form-input "value") 
+</pre>
+      <p>Example: <button id="button24">populate fields</button> 
+<div id="set-input-demo">
+<form id="my-form2">
+<input type="text"  name="field1"><br>
+<select name="field2" multiple="multiple">
+  <option value="one">One</option>
+  <option value="two">Two</option>
+  <option value="three">Three</option>
+</select><br>
+<span>option1: <input type="checkbox" name="field3" value="option1"></span>
+<span>option2: <input type="checkbox" name="field3" value="option2"></span>
+<span>option3: <input type="checkbox" name="field3" value="option3"></span>
+<br>
+<span>radio1: <input type="radio" name="field4" value="radio1"></span>
+<span>radio2: <input type="radio" name="field4" value="radio2"></span>
+<span>radio3: <input type="radio" name="field4" value="radio3"></span>
+</form>
+</div>
+      <p>The following action is triggered when we click the buttons.</p>
+<pre class="prettyprint linenums lang-clj">
+(em/defaction set-input-demo []
+  "input[name='field1']" (ef/set-form-input "Testing") 
+  "select[name='field2']" (ef/set-form-input #{"one" "two"})
+  "input[name='field3']" (ef/set-form-input #{"option1" "option3"})
+  "input[name='field4']" (ef/set-form-input "radio3"))
+</pre>
+      </section>
+
+
   </div>
 </div>
