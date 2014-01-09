@@ -25,7 +25,7 @@
   view directly.  An update to the atom will cause the view to
   re-render:</p>
 <pre class="prettyprint linenums lang-clj">
-(at node (bind-view ref (fn [node value] ...)))
+(bind-view ref (fn [node value] ...))
 </pre>
 
 <p>Example: <button id="button1">click me</button></p>
@@ -49,8 +49,8 @@
 (ef/at 
   "#bind-view-demo" (bind/bind-view my-atom render-fn)
   "#button1" (ef/listen :click 
-                        #(reset! data {:first "Abby"
-                                       :last  "Grace"))))                   
+                        #(reset! my-atom {:first "Abby"
+                                          :last  "Grace"))))                   
 </pre>
 </section>
       <section id="doc-bind-input">
@@ -60,17 +60,22 @@
 
 <p>The <em>bind-input</em> transform allows us to bind the value of an
   atom to an input field directly.  An update to the atom will cause
-  the value of the input field to updated.  If the provided event type
+  the value of the input field to be updated.  If the provided event type
   is triggered the value of the atom will be updated to match the input
   value. Through options you can specify a mapping from the value of
-  the input field to a specific field in the map or obj. </p>
+  the input field to a specific field in the map or obj. bind-input
+  will set objects consistant with how read-form-input returns values.
+  This means that multi-select and checkboxes will be set back as sets
+  and all others as single values.</p>
 <pre class="prettyprint linenums lang-clj">
-(at input-node (bind-input ref {:event :change})))
+;;opts is a map that specifies the event type and mapping.
+;; {:event :keyup
+;;  :mapping [:input1]}  
+;;mapping is optional if you are not mapping to field in 
+;;source object/map. 
 
-;;or with field mapping {:mapping [:key1 :key2] ...}
+(bind-input ref opts)
 
-(at input-node (bind-input ref {:event :change
-                                :mapping [:key1 :key2]})
 </pre>
 
 <p>Example: <input type="text" id="my-input">
@@ -99,7 +104,7 @@
     ".input2"  (ef/content (pr-str (:input2 data)))))
 
 (ef/at 
-  "#bind-input-demo" (bind-view my-data input-render-fn)
+  "#bind-input-demo" (bind/bind-view my-data input-render-fn)
   "#my-input" (bind/bind-input my-data {:event :keyup
                                         :mapping [:input1]})
   "#my-select" (bind/bind-input my-data {:event :change
@@ -112,19 +117,22 @@
         </div>
 
 <p>The <em>bind-form</em> transform allows us to bind the value of an
-  atom to an input values of a form.  An update to the atom will cause
+  atom to the input fields of a form.  An update to the atom will cause
   the values of the input fields to be updated.  If the submit event
   type is triggered the value of the atom will be updated to match the
   input values. Through options you can specify a mapping from the
-  value of the input fields to a specific field in the map or obj. </p>
+  value of the input fields to a specific field in the map or js-obj.
+  Note: javascript objects must be wrapped in an atom for the binding
+  to work.  bind-form will set objects consistant with how read-form
+  returns values.  This means that multi-select and checkboxes will
+  be set back as sets and all others as single values.</p>
 <pre class="prettyprint linenums lang-clj">
-(at form-node (bind-form ref)))
+(bind-form ref)
 
 ;;or with field mapping {:mapping {:input1 [:key1 :key2]
-                                   :input2 [:key3 :key4]}
+;;                                 :input2 [:key3 :key4]}
 
-(at form-node (bind-form ref {:mapping {:input1 [:key1 :key2]
-                                        :input2 [:key3 :key4]})
+(bind-form ref mapping)
 </pre>
 
 <p>Example: <form id="my-form">
@@ -156,7 +164,7 @@
     ".form-input2"  (ef/content (pr-str (:input2 data)))))
 
 (ef/at 
- "#bind-input-demo" (bind/bind-view my-form-data form-demo-render-fn)
+ "#bind-form-demo" (bind/bind-view my-form-data form-demo-render-fn)
   "#my-form" (bind/bind-form my-form-data))
                    
 </pre>
