@@ -372,8 +372,8 @@
 
 (em/defsnippet snippet2 :compiled "public/templates/template-demo.html" "tbody > *:first-child" 
   [fruit quantity] 
-  "tr > *:first-child" (ef/content fruit)
-  "tr > *:last-child" (ef/content (str quantity)))
+  "tr > td:first-of-type" (ef/content fruit)
+  "tr > td:last-of-type" (ef/content (str quantity)))
 
 (em/deftemplate template-demo2 :compiled "public/templates/template-demo.html" [fruit-data]
   "#heading1" (ef/content "fruit")  
