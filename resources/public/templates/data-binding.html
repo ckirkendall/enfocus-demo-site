@@ -9,6 +9,8 @@
   <div class="row">
     <div class="span3 bs-docs-sidebar">
       <ul class="table-contents nav nav-list bs-docs-sidenav">
+        <li id="bind-intro-link"><a>Understanding Binding</a></li>
+        <li id="lens-link"><a>Working with Lenses</a></li>
         <li id="bind-view-link"><a>bind-view</a></li>
         <li id="bind-input-link"><a>bind-input</a></li>
         <li id="bind-form-link"><a>bind-form</a></li>
@@ -16,7 +18,77 @@
     </div>
 
     <div class="span9">
-      <section id="doc-bind-view">
+
+<section id="doc-bind-intro">
+        <div class="page-header">
+          <h3>Understanding Binding</h3>
+        </div>
+
+<p>Enfocus supports the ability to bind data to your view.  Through
+  the use of an atom changes in your application state can be
+  propagated directly to your view.  Enfocus only updates the view
+  when the data is changed.  Enfocus also supports the use of lensing
+  to associate a view with a sub portion or transformation of your
+  application state.  The view is only updated when the output of the
+  lens changes from the last time the view was renders.  While
+  Enfocus supports the use of JavaScript objects in its bindings it is
+  optimized for clojure's persistent data structures.</p>
+</section>
+
+      
+<section id="doc-lenses">
+        <div class="page-header">
+          <h3>Working with Lenses</h3>
+        </div>
+
+<p>Lenses are a very important element of Enfocus's view binding
+  functionality. While it is possible to tie an entire atom directly
+  to the view it is often preferable to reference a portion of our
+  application state in view binding. In clojure we often see the use
+  to <font color="green">:keyword</font> or vectors of keywords to
+  represent lenses into associative structures.  A lens is a very
+  simple structure that has a set and get method, allowing us to read
+  our state in a specific way and to updated the state in a similar
+  manner. In clojure assoc, get, get-in, and assoc-in are the set
+  and get funcitons for keyword and vector lenses.  Enfocus uses the
+  library <a href="">fresnel</a> for lensing.  Fresnell extends this
+  idea though protocols to more complex objects than just clojure's
+  associative structures.  Below is an example of how these lenses work.</p>
+
+<pre class="prettyprint linenums lang-clj">
+(def state {:a {:aa "a1,b1,c1"
+                :ab 2}
+            :b {:ba "a2,b2,c2"
+                :bb 2}})
+
+;fresnel supports custom lenses
+(deflens comma-to-map [oval nval]
+  :fetch 
+    (reduce #(assoc %1 (.trim %2) true) {} (split oval #","))
+  :putback
+    (reduce #(if %1 (str %2 "," %1) %2)
+            nil
+            (filter #(nval %1) (keys nval))))
+
+;fresnel supports composing of lenses
+(def compound-lens [:a :aa comma-to-map])
+
+(fetch state compound-lens)
+;{:a1 true :b1 true :c1 true}
+
+(def new-state 
+   (putback state 
+            compound-lens 
+            {:a1 false :b1 true :c1 true :d1 true}))
+
+;;new-state {:a {:aa "b1,c1,d1" :ab 2}
+;;           :b {:ba "a2,b2,c2" :bb 2}})     
+
+</pre>
+</section>
+
+
+<section id="doc-bind-view">
         <div class="page-header">
           <h3>The <em>bind-view</em> transform</h3>
         </div>
@@ -25,7 +97,9 @@
   view directly.  An update to the atom will cause the view to
   re-render:</p>
 <pre class="prettyprint linenums lang-clj">
-(bind-view ref (fn [node value] ...))
+(bind-view ref (fn [node val] ...))
+;;or
+(bind-view ref (fn [node val] ...) lens)
 </pre>
 
 <p>Example: <button id="button1">click me</button></p>
@@ -33,21 +107,33 @@
 <table>
  <tr><th>First:</th><td class="first"></td></tr>
  <tr><th>Last:</th><td class="last"></td></tr> 
+ <tr><th>Initials:</th><td class="initials"></td></tr>
 </table>
 </div>
 <p>The following action will be triggered. when the button is
   clicked.  This will set the value of the atom and update the view.</p>
 <pre class="prettyprint linenums lang-clj">
 (def my-atom (atom {:first "Creighton" :last "Kirkendall"}))
+
+;;here we have an example of a custom lens
+(deflens initials [old-val sub-val]
+  :fetch
+    (str (first (:first old-val)) (first (:last old-val)))
+  :putback ;;not needed 
+    nil)
  
-(defn render-fn [node data]
+(defn render-fl [node data]
   (ef/at node
     ".first" (ef/content (:first data))
     ".last"  (ef/content (:last data))))
 
+(defn render-initials [node data]
+  (ef/at node (ef/content data)))
+
 
 (ef/at 
-  "#bind-view-demo" (bind/bind-view my-atom render-fn)
+  "#bind-view-demo" (bind/bind-view my-atom render-fl)
+  ".initials" (bind/bind-view my-atom render-initials initials)
   "#button1" (ef/listen :click 
                         #(reset! my-atom {:first "Abby"
                                           :last  "Grace"))))                   
@@ -70,7 +156,7 @@
 <pre class="prettyprint linenums lang-clj">
 ;;opts is a map that specifies the event type and mapping.
 ;; {:event :keyup
-;;  :mapping [:input1]}  
+;;  :lens [:user :name]}  
 ;;mapping is optional if you are not mapping to field in 
 ;;source object/map. 
 
@@ -103,12 +189,13 @@
     ".input1" (ef/content (:input1 data))
     ".input2"  (ef/content (pr-str (:input2 data)))))
 
+
 (ef/at 
   "#bind-input-demo" (bind/bind-view my-data input-render-fn)
   "#my-input" (bind/bind-input my-data {:event :keyup
-                                        :mapping [:input1]})
+                                        :lens [:input1]}) 
   "#my-select" (bind/bind-input my-data {:event :change
-                                         :mapping [:input2]}))
+                                         :lens [:input2]})) 
 </pre>
 </section>
       <section id="doc-bind-form">
@@ -129,10 +216,10 @@
 <pre class="prettyprint linenums lang-clj">
 (bind-form ref)
 
-;;or with field mapping {:mapping {:input1 [:key1 :key2]
-;;                                 :input2 [:key3 :key4]}
+;;or with a options
+;; {:lens [:user]}    
 
-(bind-form ref mapping)
+(bind-form ref opts)
 </pre>
 
 <p>Example: <form id="my-form">

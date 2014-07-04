@@ -3,8 +3,10 @@
             [enfocus.effects :as effects]
             [enfocus.events :as ev]
             [enfocus.bind :as bind]
-            [goog.dom :as dom])
-  (:require-macros [enfocus.macros :as em]))
+            [goog.dom :as dom]
+            [fresnel.lenses :as lens :refer [fetch putback Lens]])
+  (:require-macros [enfocus.macros :as em]
+                   [fresnel.lenses :refer [deflens]]))
 
 (declare home 
          about-page 
@@ -456,7 +458,7 @@
   "#button4" (ev/listen :click read-form-demo)
   "#input-demo-btn" (ev/listen :click read-input-demo))
 
-
+ 
 
 
 ;########################################
@@ -467,10 +469,19 @@
 
 (def my-atom (atom {:first "Creighton" :last "Kirkendall"}))
 
-(defn render-fn [node data]
+(deflens initials [old-val sub-val]
+  :fetch
+    (str (first (:first old-val)) (first (:last old-val)))
+  :putback ;;not needed 
+    nil)
+
+(defn render-fl [node data]
   (ef/at node
     ".first" (ef/content (:first data))
     ".last"  (ef/content (:last data))))
+
+(defn render-initials [node data]
+  (ef/at node (ef/content data)))
 
 (def my-data (atom {:input1 "type here"
                     :input2 #{"One" "Three"}}))
@@ -491,20 +502,25 @@
 
 (em/defaction doc-view-binding-page [] 
   "#content-pane" (ef/do->
-                     (ef/content (doc-binding)))         
+                   (ef/content (doc-binding)))
+  "#bind-intro-link" (ev/listen :click
+                          #(ef/at "#doc-bind-intro" (scroll-to))) 
+  "#lens-link" (ev/listen :click
+                          #(ef/at "#doc-lenses" (scroll-to))) 
   "#bind-view-link" (ev/listen :click
                                #(ef/at "#doc-bind-view" (scroll-to))) 
   "#bind-input-link" (ev/listen :click
                                 #(ef/at "#doc-bind-input" (scroll-to)))  
   "#bind-form-link" (ev/listen :click
                                #(ef/at "#doc-bind-form" (scroll-to)))
-  "#bind-view-demo" (bind/bind-view my-atom render-fn)
+  "#bind-view-demo" (bind/bind-view my-atom render-fl)
+  ".initials" (bind/bind-view my-atom render-initials initials)
   "#button1" (ev/listen :click 
                         #(reset! my-atom {:first "Abby"
                                           :last  "Grace"}))
   "#bind-input-demo" (bind/bind-view my-data input-render-fn)
   "#my-input" (bind/bind-input my-data {:event :keyup
-                                        :mapping [:input1]})
+                                        :mapping [:input1]}) 
   "#my-select" (bind/bind-input my-data {:event :change
                                         :mapping [:input2]})
   "#bind-form-demo" (bind/bind-view my-form-data form-demo-render-fn)
