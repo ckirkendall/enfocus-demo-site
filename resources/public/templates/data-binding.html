@@ -1,7 +1,7 @@
 <header class="jumbotron subhead" id="overview">
   <div class="container">
     <h1>View Bindings</h1>
-    <p class="lead">Binding the applications state to the view.</p>
+    <p class="lead">Binding the application's state to the view.</p>
   </div>
 </header>
 
@@ -30,7 +30,7 @@
   when the data is changed.  Enfocus also supports the use of lensing
   to associate a view with a sub portion or transformation of your
   application state.  The view is only updated when the output of the
-  lens changes from the last time the view was renders.  While
+  lens changes from the last time the view was rendered.  While
   Enfocus supports the use of JavaScript objects in its bindings it is
   optimized for clojure's persistent data structures.</p>
 </section>
@@ -41,17 +41,17 @@
           <h3>Working with Lenses</h3>
         </div>
 
-<p>Lenses are a very important element of Enfocus's view binding
+<p>Lenses are a very important element of Enfocus' view binding
   functionality. While it is possible to tie an entire atom directly
   to the view it is often preferable to reference a portion of our
   application state in view binding. In clojure we often see the use
-  to <font color="green">:keyword</font> or vectors of keywords to
-  represent lenses into associative structures.  A lens is a very
+  to a <font color="green">:keyword</font> or vectors of keywords to
+  represent a lens into an associative structures.  A lens is a very
   simple structure that has a set and get method, allowing us to read
-  our state in a specific way and to updated the state in a similar
+  our state in a specific way and to update the state in a similar
   manner. In clojure assoc, get, get-in, and assoc-in are the set
   and get funcitons for keyword and vector lenses.  Enfocus uses the
-  library <a href="">fresnel</a> for lensing.  Fresnell extends this
+  library <a href="">fresnel</a> for lensing.  Fresnel extends this
   idea though protocols to more complex objects than just clojure's
   associative structures.  Below is an example of how these lenses work.</p>
 
@@ -217,7 +217,8 @@
 (bind-form ref)
 
 ;;or with a options
-;; {:lens [:user]}    
+;; {:binding-type :one-way (:two-way is default)  
+    :lens [:user]}    
 
 (bind-form ref opts)
 </pre>
@@ -240,7 +241,7 @@
 </div>
 
 <p>The following action will be triggered when either of the input
-  fields are changed.</p>
+  fields are changed and the form is submitted.</p>
 <pre class="prettyprint linenums lang-clj">
 (def my-form-data (atom {:input1 "type here"
                          :input2 #{"One" "Three"}}))
